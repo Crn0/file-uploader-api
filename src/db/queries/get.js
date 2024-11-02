@@ -122,9 +122,9 @@ const userRootFolder = async (id, options) => {
         files: {
             orderBy: {
                 createdAt: 'asc',
-                take: 10,
-                skip: 0,
             },
+            take: 10,
+            skip: 0,
         },
     });
 
@@ -162,9 +162,9 @@ const userFolder = async (id, options) => {
         files: {
             orderBy: {
                 createdAt: 'asc',
-                take: 10,
-                skip: 0,
             },
+            take: 10,
+            skip: 0,
         },
     });
 
