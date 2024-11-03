@@ -60,9 +60,8 @@ model File {
   name      String       @db.VarChar(255)
   url       String       @db.VarChar(255)
   publicId  String       @map("public_id") @db.VarChar(255)
-  type      ResourceType @default(file)
+  type      ResourceType @default(unknown)
   size      BigInt       @db.BigInt
-  format    Format       
   Folder    Folder       @relation(fields: [folderId], references: [id])
   folderId  Int          @map("folder_id")
   createdAt DateTime     @default(now()) @map("created_at")
@@ -82,14 +81,11 @@ enum Role {
 }
 
 enum ResourceType {
-  folder
-  file
-}
-
-enum Format {
   unknown
-  jpg
+  folder
   png
+  jpeg
+  jpg
   webp
   epub
 }
