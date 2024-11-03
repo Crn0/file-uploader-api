@@ -24,7 +24,7 @@ async function main() {
                                     name: 'cat.png',
                                     url: resources[0].url,
                                     size: resources[0].bytes,
-                                    format: resources[0].format,
+                                    type: resources[0].format,
                                     publicId: resources[0].public_id,
                                 },
                             },
