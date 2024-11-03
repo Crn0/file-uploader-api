@@ -57,16 +57,17 @@ model Folder {
 }
 
 model File {
-  id        Int          @id @default(autoincrement())
-  name      String       @db.VarChar(255)
-  url       String       @db.VarChar(255)
-  publicId  String       @map("public_id") @db.VarChar(255)
-  type      ResourceType @default(unknown)
-  size      BigInt       @db.BigInt
-  Folder    Folder       @relation(fields: [folderId], references: [id])
-  folderId  Int          @map("folder_id")
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @default(now()) @map("updated_at")
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar(255)
+  url          String       @db.VarChar(255)
+  publicId     String       @map("public_id") @db.VarChar(255)
+  resourceType ResourceType @default(unknown) @map("resource_type")
+  deliveryType DeliveryType @default(upload) @map("delivery_type")
+  size         BigInt       @db.BigInt
+  Folder       Folder       @relation(fields: [folderId], references: [id])
+  folderId     Int          @map("folder_id")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @default(now()) @map("updated_at")
 
   @@map("files")
 }
@@ -79,6 +80,12 @@ enum Role {
   demo
   user
   admin
+}
+
+enum DeliveryType {
+  upload
+  private
+  authenticated
 }
 
 enum ResourceType {
