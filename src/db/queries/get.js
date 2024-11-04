@@ -1,5 +1,5 @@
 import client from '../client.js';
-import utils from './utils/index.js';
+import utils from '../../helpers/queries/index.js';
 
 const { optionFn } = utils;
 
