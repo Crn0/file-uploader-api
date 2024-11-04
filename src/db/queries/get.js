@@ -1,16 +1,7 @@
 import client from '../client.js';
+import utils from './utils/index.js';
 
-const optionFn = (options, obj) => {
-    let ops = { ...options };
-
-    if (typeof options !== 'object') {
-        ops = {
-            ...obj,
-        };
-    }
-
-    return ops;
-};
+const { optionFn } = utils;
 
 // USER META
 const userById = async (id, options) => {
@@ -186,9 +177,9 @@ const userFile = async (id, options) => {
         name: true,
         url: true,
         publicId: true,
-        type: true,
+        resourceType: true,
+        deliveryType: true,
         size: true,
-        format: true,
         folderId: true,
         createdAt: true,
         updatedAt: true,
