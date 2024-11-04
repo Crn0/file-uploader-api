@@ -7,7 +7,7 @@ async function main() {
     const { resources } = await cloudinary.api.resources_by_ids(
         'Test/yae516krkls0lmkemauj'
     );
-
+    console.log(resources);
     const [testUser, testOpenId] = await prisma.$transaction([
         prisma.user.create({
             data: {
@@ -24,7 +24,8 @@ async function main() {
                                     name: 'cat.png',
                                     url: resources[0].url,
                                     size: resources[0].bytes,
-                                    type: resources[0].format,
+                                    resourceType: resources[0].format,
+                                    deliveryType: resources[0].type,
                                     publicId: resources[0].public_id,
                                 },
                             },
@@ -37,17 +38,245 @@ async function main() {
                                         folders: {
                                             create: [
                                                 {
-                                                    name: 'Nested_Nested_Test',
-                                                    path: '/Test/Nested_Test/Nested_Nested_Test',
+                                                    name: 'Nested_Nested_Test01',
+                                                    path: '/Test/Nested_Test/Nested_Nested_Test01',
                                                     ownerId: 1,
+                                                    folders: {
+                                                        create: [
+                                                            {
+                                                                name: 'Nested_Nested_Test02',
+                                                                path: '/Test/Nested_Test/Nested_Nested_Test02',
+                                                                ownerId: 1,
+                                                                folders: {
+                                                                    create: {
+                                                                        name: 'Nested_Nested_Nested_Test01',
+                                                                        path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01',
+                                                                        ownerId: 1,
+                                                                        folders:
+                                                                            {
+                                                                                create: {
+                                                                                    name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                    path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                    ownerId: 1,
+                                                                                    folders:
+                                                                                        {
+                                                                                            create: {
+                                                                                                name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                                path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                                ownerId: 1,
+                                                                                                folders:
+                                                                                                    {
+                                                                                                        create: {
+                                                                                                            name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                                            path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                                            ownerId: 1,
+                                                                                                            files: {
+                                                                                                                create: [
+                                                                                                                    {
+                                                                                                                        name: 'cat.png',
+                                                                                                                        url: resources[0]
+                                                                                                                            .url,
+                                                                                                                        size: resources[0]
+                                                                                                                            .bytes,
+                                                                                                                        resourceType:
+                                                                                                                            resources[0]
+                                                                                                                                .format,
+                                                                                                                        deliveryType:
+                                                                                                                            resources[0]
+                                                                                                                                .type,
+                                                                                                                        publicId:
+                                                                                                                            resources[0]
+                                                                                                                                .public_id,
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        name: 'cat.png',
+                                                                                                                        url: resources[0]
+                                                                                                                            .url,
+                                                                                                                        size: resources[0]
+                                                                                                                            .bytes,
+                                                                                                                        resourceType:
+                                                                                                                            resources[0]
+                                                                                                                                .format,
+                                                                                                                        deliveryType:
+                                                                                                                            resources[0]
+                                                                                                                                .type,
+                                                                                                                        publicId:
+                                                                                                                            resources[0]
+                                                                                                                                .public_id,
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                    },
+                                                                                            },
+                                                                                        },
+                                                                                },
+                                                                            },
+                                                                    },
+                                                                },
+                                                            },
+                                                            {
+                                                                name: 'Nested_Nested_Test02',
+                                                                path: '/Test/Nested_Test/Nested_Nested_Test02',
+                                                                ownerId: 1,
+                                                                folders: {
+                                                                    create: {
+                                                                        name: 'Nested_Nested_Nested_Test01',
+                                                                        path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01',
+                                                                        ownerId: 1,
+                                                                        folders:
+                                                                            {
+                                                                                create: {
+                                                                                    name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                    path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                    ownerId: 1,
+                                                                                    folders:
+                                                                                        {
+                                                                                            create: {
+                                                                                                name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                                path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                                ownerId: 1,
+                                                                                                folders:
+                                                                                                    {
+                                                                                                        create: {
+                                                                                                            name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                                            path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                                            ownerId: 1,
+                                                                                                            files: {
+                                                                                                                create: [
+                                                                                                                    {
+                                                                                                                        name: 'cat.png',
+                                                                                                                        url: resources[0]
+                                                                                                                            .url,
+                                                                                                                        size: resources[0]
+                                                                                                                            .bytes,
+                                                                                                                        resourceType:
+                                                                                                                            resources[0]
+                                                                                                                                .format,
+                                                                                                                        deliveryType:
+                                                                                                                            resources[0]
+                                                                                                                                .type,
+                                                                                                                        publicId:
+                                                                                                                            resources[0]
+                                                                                                                                .public_id,
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        name: 'cat.png',
+                                                                                                                        url: resources[0]
+                                                                                                                            .url,
+                                                                                                                        size: resources[0]
+                                                                                                                            .bytes,
+                                                                                                                        resourceType:
+                                                                                                                            resources[0]
+                                                                                                                                .format,
+                                                                                                                        deliveryType:
+                                                                                                                            resources[0]
+                                                                                                                                .type,
+                                                                                                                        publicId:
+                                                                                                                            resources[0]
+                                                                                                                                .public_id,
+                                                                                                                    },
+                                                                                                                ],
+                                                                                                            },
+                                                                                                        },
+                                                                                                    },
+                                                                                            },
+                                                                                        },
+                                                                                },
+                                                                            },
+                                                                    },
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                },
+                                                {
+                                                    name: 'Nested_Nested_Test02',
+                                                    path: '/Test/Nested_Test/Nested_Nested_Test02',
+                                                    ownerId: 1,
+                                                    folders: {
+                                                        create: {
+                                                            name: 'Nested_Nested_Nested_Test01',
+                                                            path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01',
+                                                            ownerId: 1,
+                                                            folders: {
+                                                                create: {
+                                                                    name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                    path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                    ownerId: 1,
+                                                                    folders: {
+                                                                        create: {
+                                                                            name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                            path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                            ownerId: 1,
+                                                                            folders:
+                                                                                {
+                                                                                    create: {
+                                                                                        name: 'Nested_Nested_Nested_Nested_Test01',
+                                                                                        path: '/Test/Nested_Nested_Test02/Nested_Nested_Nested_Test01/Nested_Nested_Nested_Nested_Test01',
+                                                                                        ownerId: 1,
+                                                                                        files: {
+                                                                                            create: [
+                                                                                                {
+                                                                                                    name: 'cat.png',
+                                                                                                    url: resources[0]
+                                                                                                        .url,
+                                                                                                    size: resources[0]
+                                                                                                        .bytes,
+                                                                                                    resourceType:
+                                                                                                        resources[0]
+                                                                                                            .format,
+                                                                                                    deliveryType:
+                                                                                                        resources[0]
+                                                                                                            .type,
+                                                                                                    publicId:
+                                                                                                        resources[0]
+                                                                                                            .public_id,
+                                                                                                },
+                                                                                                {
+                                                                                                    name: 'cat.png',
+                                                                                                    url: resources[0]
+                                                                                                        .url,
+                                                                                                    size: resources[0]
+                                                                                                        .bytes,
+                                                                                                    resourceType:
+                                                                                                        resources[0]
+                                                                                                            .format,
+                                                                                                    deliveryType:
+                                                                                                        resources[0]
+                                                                                                            .type,
+                                                                                                    publicId:
+                                                                                                        resources[0]
+                                                                                                            .public_id,
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    },
+                                                                                },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
                                                 },
                                             ],
                                         },
-                                    },
-                                    {
-                                        name: 'Nested_Nested_Test02',
-                                        path: '/Test/Nested_Test/Nested_Nested_Test02',
-                                        ownerId: 1,
+                                        files: {
+                                            create: [
+                                                {
+                                                    name: 'cat.png',
+                                                    url: resources[0].url,
+                                                    size: resources[0].bytes,
+                                                    resourceType:
+                                                        resources[0].format,
+                                                    deliveryType:
+                                                        resources[0].type,
+                                                    publicId:
+                                                        resources[0].public_id,
+                                                },
+                                            ],
+                                        },
                                     },
                                 ],
                             },
@@ -75,7 +304,6 @@ async function main() {
                         },
                         create: {
                             username: 'Jane Doe',
-                            email: 'Jane@test.com',
                         },
                     },
                 },
