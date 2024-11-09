@@ -19,7 +19,6 @@ class ErrorHandler {
         return res.status(error.httpCode).json({
             code: error.httpCode,
             message: error.message,
-            description: error.description,
         });
     }
 

@@ -4,7 +4,7 @@ class FormError extends BaseError {
     constructor(
         message,
         errors,
-        httpCode,
+        httpCode = 422,
         name = 'Form Error',
         isOperational = true
     ) {
