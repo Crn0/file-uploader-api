@@ -20,6 +20,7 @@ model User {
   password  String?  @db.VarChar(60)
   openIds   OpenId[]
   folders   Folder[]
+  files     File[]
   role      Role     @default(user)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
@@ -31,7 +32,7 @@ model OpenId {
   id        Int      @id @default(autoincrement())
   provider  Provider
   tokenId   String   @map("token_id") @db.VarChar(255)
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -44,7 +45,7 @@ model Folder {
   id                 Int          @id @default(autoincrement())
   name               String       @db.VarChar(255)
   path               String       @db.VarChar(255)
-  owner              User         @relation(fields: [ownerId], references: [id])
+  owner              User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId            Int          @map("owner_id")
   type               ResourceType @default(folder)
   folders            Folder[]     @relation("folders")
@@ -64,7 +65,8 @@ model File {
   resourceType ResourceType @default(unknown) @map("resource_type")
   deliveryType DeliveryType @default(upload) @map("delivery_type")
   size         BigInt       @db.BigInt
-  Folder       Folder       @relation(fields: [folderId], references: [id])
+  User         User[]
+  Folder       Folder       @relation(fields: [folderId], references: [id], onDelete: Cascade)
   folderId     Int          @map("folder_id")
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @default(now()) @map("updated_at")
