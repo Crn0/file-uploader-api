@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String?  @unique @db.VarChar(255)
-  email     String?  @unique @db.VarChar(255)
-  password  String?  @db.VarChar(60)
-  openIds   OpenId[]
+  id        Int              @id @default(autoincrement())
+  username  String?          @unique @db.VarChar(255)
+  email     String?          @unique @db.VarChar(255)
+  password  String?          @db.VarChar(60)
+  role      Role             @default(user)
   folders   Folder[]
   files     File[]
-  role      Role     @default(user)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+  openIds   OpenId[]
+  tokens    BlackListToken[]
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime         @default(now()) @map("updated_at") @db.Timestamptz(3)
 
   @@map("users")
 }
@@ -39,6 +40,16 @@ model OpenId {
 
   @@unique([provider, tokenId])
   @@map("open_ids")
+}
+
+model BlackListToken {
+  id        Int      @id @default(autoincrement())
+  jwtId     String   @unique() @map("jwt_id") @db.VarChar(36)
+  userId    Int      @map("user_id")
+  expiresIn DateTime @map("expires_in")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("blacklist_tokens")
 }
 
 model Folder {
