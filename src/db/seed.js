@@ -27,6 +27,11 @@ async function main() {
                                     resourceType: resources[0].format,
                                     deliveryType: resources[0].type,
                                     publicId: resources[0].public_id,
+                                    owner: {
+                                        connect: {
+                                            username: 'John Doe',
+                                        },
+                                    },
                                 },
                             },
                             folders: {
@@ -87,6 +92,13 @@ async function main() {
                                                                                                                         publicId:
                                                                                                                             resources[0]
                                                                                                                                 .public_id,
+                                                                                                                        owner: {
+                                                                                                                            connect:
+                                                                                                                                {
+                                                                                                                                    username:
+                                                                                                                                        'John Doe',
+                                                                                                                                },
+                                                                                                                        },
                                                                                                                     },
                                                                                                                     {
                                                                                                                         name: 'cat.png',
@@ -103,6 +115,13 @@ async function main() {
                                                                                                                         publicId:
                                                                                                                             resources[0]
                                                                                                                                 .public_id,
+                                                                                                                        owner: {
+                                                                                                                            connect:
+                                                                                                                                {
+                                                                                                                                    username:
+                                                                                                                                        'John Doe',
+                                                                                                                                },
+                                                                                                                        },
                                                                                                                     },
                                                                                                                 ],
                                                                                                             },
@@ -159,6 +178,13 @@ async function main() {
                                                                                                                         publicId:
                                                                                                                             resources[0]
                                                                                                                                 .public_id,
+                                                                                                                        owner: {
+                                                                                                                            connect:
+                                                                                                                                {
+                                                                                                                                    username:
+                                                                                                                                        'John Doe',
+                                                                                                                                },
+                                                                                                                        },
                                                                                                                     },
                                                                                                                     {
                                                                                                                         name: 'cat.png',
@@ -175,6 +201,13 @@ async function main() {
                                                                                                                         publicId:
                                                                                                                             resources[0]
                                                                                                                                 .public_id,
+                                                                                                                        owner: {
+                                                                                                                            connect:
+                                                                                                                                {
+                                                                                                                                    username:
+                                                                                                                                        'John Doe',
+                                                                                                                                },
+                                                                                                                        },
                                                                                                                     },
                                                                                                                 ],
                                                                                                             },
@@ -232,6 +265,13 @@ async function main() {
                                                                                                     publicId:
                                                                                                         resources[0]
                                                                                                             .public_id,
+                                                                                                    owner: {
+                                                                                                        connect:
+                                                                                                            {
+                                                                                                                username:
+                                                                                                                    'John Doe',
+                                                                                                            },
+                                                                                                    },
                                                                                                 },
                                                                                                 {
                                                                                                     name: 'cat.png',
@@ -248,6 +288,13 @@ async function main() {
                                                                                                     publicId:
                                                                                                         resources[0]
                                                                                                             .public_id,
+                                                                                                    owner: {
+                                                                                                        connect:
+                                                                                                            {
+                                                                                                                username:
+                                                                                                                    'John Doe',
+                                                                                                            },
+                                                                                                    },
                                                                                                 },
                                                                                             ],
                                                                                         },
@@ -274,6 +321,12 @@ async function main() {
                                                         resources[0].type,
                                                     publicId:
                                                         resources[0].public_id,
+                                                    owner: {
+                                                        connect: {
+                                                            username:
+                                                                'John Doe',
+                                                        },
+                                                    },
                                                 },
                                             ],
                                         },
