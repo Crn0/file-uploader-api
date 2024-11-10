@@ -5,6 +5,7 @@ const { optionFn } = helpers;
 
 const createLocal = async (username, email, password, options) => {
     const userOptions = optionFn(options, {
+        id: true,
         username: true,
         email: true,
         role: true,
