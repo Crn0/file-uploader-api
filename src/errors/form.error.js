@@ -8,7 +8,7 @@ class FormError extends BaseError {
         name = 'Form Error',
         isOperational = true
     ) {
-        super(name, httpCode, message, errors, isOperational);
+        super(message, httpCode, name, errors, isOperational);
     }
 }
 
