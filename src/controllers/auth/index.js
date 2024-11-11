@@ -5,6 +5,8 @@ import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import authService from '../../services/auth.service.js';
 import userService from '../../services/user.service.js';
+import folderService from '../../services/folder.service.js';
+import StorageFactory from '../../storages/index.js';
 import FormError from '../../errors/form.error.js';
 import AuthError from '../../errors/auth.error.js';
 
@@ -34,6 +36,14 @@ const createUserLocal = asyncHandler(async (req, res, next) => {
     }
 
     const user = await authService.signupLocal(req.body);
+    const storage = StorageFactory().createStorage('cloudinary');
+
+    // create users' root folder on account creation
+    const rootFolder = await storage.createFolder(
+        `${process.env.CLOUDINARY_ROOT_FOLDER}/${user.username}-folder`
+    );
+
+    await folderService.createFolder(user.id, rootFolder.name, rootFolder.path);
 
     req.user = user;
 

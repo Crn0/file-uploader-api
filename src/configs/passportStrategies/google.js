@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import userService from '../../services/user.service.js';
 import authService from '../../services/auth.service.js';
+import userService from '../../services/user.service.js';
+import folderService from '../../services/folder.service.js';
+import StorageFactory from '../../storages/index.js';
 
 const options = {
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -21,14 +23,26 @@ const verifyCb = async (accessToken, refreshToken, profile, done) => {
         const openIdExist = await userService.meByOpenId(provider, tokenId);
 
         if (!openIdExist) {
+            const storage = StorageFactory().createStorage('cloudinary');
             const username = `${givenName}-${uuidv4()}`;
-            const createUser = await authService.signupOpenId({
+            const createdUser = await authService.signupOpenId({
                 provider,
                 tokenId,
                 username,
             });
 
-            return done(null, createUser.user);
+            // create users' root folder on account creation
+            const rootFolder = await storage.createFolder(
+                `${process.env.CLOUDINARY_ROOT_FOLDER}/${username}-folder`
+            );
+
+            await folderService.createFolder(
+                createdUser.id,
+                rootFolder.name,
+                rootFolder.path
+            );
+
+            return done(null, createdUser);
         }
 
         return done(null, openIdExist.user);
