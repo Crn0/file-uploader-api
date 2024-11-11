@@ -23,6 +23,16 @@ const getFolder = async (id, options) => {
     return folder;
 };
 
+const getSubFolderByUserId = async (userId, folderId, options) => {
+    const folder = await folderRepository.getSubFolderByUserId(
+        userId,
+        folderId,
+        options
+    );
+
+    return folder;
+};
+
 const deleteFolder = async (userId, folderId, cb) => {
     const folder = await folderRepository.deleteFolder(userId, folderId, cb);
 
@@ -33,5 +43,6 @@ export default {
     createFolder,
     getRootFolder,
     getFolder,
+    getSubFolderByUserId,
     deleteFolder,
 };
