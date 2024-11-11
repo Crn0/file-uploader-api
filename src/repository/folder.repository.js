@@ -205,7 +205,7 @@ const deleteFolder = async (userId, folderId, cb) => {
         where: { id: folderId, systemetricFolders: { some: {} } },
     });
 
-    await cb(main.path, main.files);
+    await cb(main.path);
 };
 
 export default {
