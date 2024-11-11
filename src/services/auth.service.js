@@ -82,9 +82,6 @@ const signupLocal = async (userInputDTO, options) => {
 
 const signupOpenId = async (openIdDTO, options) => {
     try {
-        const accessTokenCurry = generateTokenCurry('access');
-        const refreshTokenCurry = generateTokenCurry('refresh');
-
         const { provider, tokenId, username } = openIdDTO;
 
         const user = await authRepository.createOpenId(
@@ -94,19 +91,7 @@ const signupOpenId = async (openIdDTO, options) => {
             options
         );
 
-        const accessToken = accessTokenCurry(
-            user,
-            ACCESS_TOKEN_SECRET,
-            ACCESS_TOKEN_EXP
-        );
-
-        const refreshToken = refreshTokenCurry(
-            {},
-            REFRESH_TOKEN_SECRET,
-            REFRESH_TOKEN_EXP
-        );
-
-        return { user, accessToken, refreshToken };
+        return user;
     } catch (error) {
         return error;
     }
