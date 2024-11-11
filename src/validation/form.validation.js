@@ -19,11 +19,8 @@ const username = () =>
         .custom(async (val) => {
             const userExist = await userRepository.getUserByUsername(val);
 
-            if (userExist) {
-                await client.user.delete({ where: { username: val } });
-                return Promise.resolve();
-            }
-            // return Promise.reject(new Error('username already in use'));
+            if (userExist)
+                return Promise.reject(new Error('username already in use'));
 
             return Promise.resolve();
         })
