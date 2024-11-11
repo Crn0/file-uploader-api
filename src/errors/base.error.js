@@ -1,5 +1,5 @@
 class BaseError extends Error {
-    constructor(name, httpCode, message, errors, isOperational) {
+    constructor(message, httpCode, name, errors, isOperational) {
         super(message);
         this.name = name;
         this.httpCode = httpCode;
