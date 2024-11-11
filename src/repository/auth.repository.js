@@ -31,12 +31,9 @@ const createLocal = async (username, email, password, options) => {
 
 const createOpenId = async (provider, tokenId, username, options) => {
     const userOptions = optionFn(options, {
-        username: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-        openIds: true,
+        provider: true,
+        tokenId: true,
+        user: true,
     });
 
     const user = await client.openId.create({
@@ -85,9 +82,19 @@ const blackListToken = async (userId, jwtId, expiresIn, options) => {
 const getToken = async (jwtId) =>
     client.blackListToken.findUnique({ where: { jwtId } });
 
+const deleteExpiredTokens = async () =>
+    client.blackListToken.deleteMany({
+        where: {
+            expiresIn: {
+                lte: new Date(),
+            },
+        },
+    });
+
 export default {
     createLocal,
     createOpenId,
     blackListToken,
     getToken,
+    deleteExpiredTokens,
 };

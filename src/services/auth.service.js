@@ -137,15 +137,17 @@ const login = (userInputDTO) => {
     return { accessToken, refreshToken };
 };
 
-const blacListToken = async (userId, jwtId, expiresIn) => {
-    const blackListToken = authRepository.blackListToken(
+const blackListToken = async (userId, jwtId, expiresIn) => {
+    const token = authRepository.blackListToken(
         Number(userId),
         jwtId,
         expiresIn
     );
 
-    return blackListToken;
+    return token;
 };
+
+const deleteExpiredTokens = async () => authRepository.deleteExpiredTokens();
 
 export default {
     clean,
@@ -153,5 +155,6 @@ export default {
     signupLocal,
     signupOpenId,
     login,
-    blacListToken,
+    blackListToken,
+    deleteExpiredTokens,
 };
