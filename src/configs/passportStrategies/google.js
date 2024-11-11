@@ -1,34 +1,37 @@
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import queries from '../../db/queries/index.js';
+import userService from '../../services/user.service.js';
+import authService from '../../services/auth.service.js';
 
 const options = {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    scope: ['email', 'profile'],
-    state: true,
+    scope: ['profile'],
+    state: false,
 };
 
 const verifyCb = async (accessToken, refreshToken, profile, done) => {
     try {
-        const { provider, tokenId, givenName } = profile;
+        const { provider } = profile;
+        // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
+        const { sub: tokenId, given_name: givenName } = profile._json;
 
-        const userExist = await queries.get.userByOpenId(tokenId);
+        const openIdExist = await userService.meByOpenId(provider, tokenId);
 
-        if (!userExist) {
+        if (!openIdExist) {
             const username = `${givenName}-${uuidv4()}`;
-            const createUser = await queries.post.userOpenId(
+            const createUser = await authService.signupOpenId({
                 provider,
                 tokenId,
-                username
-            );
+                username,
+            });
 
-            return done(null, createUser);
+            return done(null, createUser.user);
         }
 
-        return done(null, userExist);
+        return done(null, openIdExist.user);
     } catch (error) {
         return done(error);
     }
