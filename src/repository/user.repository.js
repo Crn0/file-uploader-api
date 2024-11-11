@@ -70,23 +70,19 @@ const getUserByUsername = async (username, options) => {
     return user;
 };
 
-const getUserByOpenId = async (tokenId, options) => {
+const getUserByOpenId = async (provider, tokenId, options) => {
     const userOptions = optionFn(options, {
         id: true,
-        username: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-        openIds: true,
+        provider: true,
+        tokenId: true,
+        user: true,
     });
 
-    const user = await client.user.findFirst({
+    const user = await client.openId.findUnique({
         where: {
-            openIds: {
-                some: {
-                    tokenId,
-                },
+            provider_tokenId: {
+                provider,
+                tokenId,
             },
         },
         select: {

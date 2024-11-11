@@ -23,11 +23,15 @@ const objectsStringifyValue = (arrObj, valueToString) => {
     }));
 };
 
-const me = async (id) => {
-    const user = await userRepository.getUserById(id);
+const meById = async (id) => userRepository.getUserById(id);
 
-    return user;
-};
+const meByEmail = async (email) => userRepository.getUserByEmail(email);
+
+const meByUsername = async (username) =>
+    userRepository.getUserByUsername(username);
+
+const meByOpenId = async (provider, tokenId) =>
+    userRepository.getUserByOpenId(provider, tokenId);
 
 const updateUsername = async (id, newUsername, options) => {
     const patchedUser = await userRepository.patchUsername(
@@ -65,7 +69,10 @@ const deleteUser = async (id, storage) => {
 export default {
     clean,
     objectsStringifyValue,
-    me,
+    meById,
+    meByEmail,
+    meByUsername,
+    meByOpenId,
     updateUsername,
     updatePassword,
     deleteUser,
