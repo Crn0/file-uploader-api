@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 const corsOptions = {
     origin: process.env.CORS_ORIGINS.split(','),
-    methods: 'GET,HEAD,PUT,POST,DELETE',
+    methods: process.env.CORS_METHODS.split(','),
     optionsSuccessStatus: 200,
 };
 
