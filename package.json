@@ -17,6 +17,7 @@
         "prismaProd": "dotenv -e .env.prod -- npx prisma migrate deploy",
         "prismaReset": "dotenv -e .env.dev -- npx prisma migrate reset",
         "prismaDbPush": "dotenv -e .env.dev -- npx prisma db push",
+        "prismaCreateOnly": "dotenv -e .env.dev -- npx prisma migrate dev --create-only",
         "dev": "dotenv -e .env.dev -- node --watch ./src/bin/www.js",
         "prod": "dotenv -e .env.prod -- node --watch ./src/bin/www.js",
         "server": "DEBUG=<directory-name>:* npm run dev",
