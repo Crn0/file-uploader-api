@@ -10,7 +10,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import corsOptions from './configs/cors/index.js';
 import passportStrategy from './configs/passportStrategies/index.js';
-import routes from './routes/index.js';
+import apiRoutes from './routes/api/index.js';
 import ErrorHandler from './errors/error.handler.js';
 
 const app = express();
@@ -31,7 +31,7 @@ app.use(compression()); // Compress all routes
 app.use(express.static(join(__dirname, '..', 'public')));
 
 // ROUTES
-app.use('/api/v1/auth', routes.auth);
+app.use('/api/v1/auth', apiRoutes.auth);
 
 // error handler
 app.use((err, req, res, _) => {
