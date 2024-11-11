@@ -6,7 +6,7 @@ const { optionFn } = helpers;
 const createFile = async (
     folderId,
     name,
-    url,
+    thumbnail,
     publicId,
     resourceType,
     deliveryType,
@@ -16,7 +16,7 @@ const createFile = async (
     const fileOption = optionFn(options, {
         id: true,
         name: true,
-        url: true,
+        thumbnail: true,
         publicId: true,
         resourceType: true,
         deliveryType: true,
@@ -29,7 +29,7 @@ const createFile = async (
     const file = await client.file.create({
         data: {
             name,
-            url,
+            thumbnail,
             publicId,
             resourceType,
             deliveryType,
@@ -52,7 +52,7 @@ const getFile = async (id, options) => {
     const fileOption = optionFn(options, {
         id: true,
         name: true,
-        url: true,
+        thumbnail: true,
         publicId: true,
         resourceType: true,
         deliveryType: true,
@@ -76,7 +76,7 @@ const getFileByFolderId = async (folderId, fileId, options) => {
     const fileOption = optionFn(options, {
         id: true,
         name: true,
-        url: true,
+        thumbnail: true,
         publicId: true,
         resourceType: true,
         deliveryType: true,

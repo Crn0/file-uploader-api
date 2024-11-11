@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id        Int              @id @default(autoincrement())
-  username  String          @unique @db.VarChar(255)
+  username  String           @unique @db.VarChar(255)
   email     String?          @unique @db.VarChar(255)
   password  String?          @db.VarChar(60)
   role      Role             @default(user)
@@ -71,7 +71,7 @@ model Folder {
 model File {
   id           Int          @id @default(autoincrement())
   name         String       @db.VarChar(255)
-  url          String       @db.VarChar(255)
+  thumbnail    String       @db.VarChar(255)
   publicId     String       @map("public_id") @db.VarChar(255)
   size         BigInt       @db.BigInt
   ownerId      Int          @map("owner_id")
