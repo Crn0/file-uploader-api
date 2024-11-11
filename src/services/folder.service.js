@@ -1,25 +1,30 @@
-import queries from '../db/queries/index.js';
+import folderRepository from '../repository/folder.repository.js';
 
 const createFolder = async (ownerId, name, path, options) => {
-    const folder = await queries.post.userFolder(ownerId, name, path, options);
+    const folder = await folderRepository.createFolder(
+        ownerId,
+        name,
+        path,
+        options
+    );
 
     return folder;
 };
 
-const getRootFolder = async (userId, options) => {
-    const folder = await queries.get.userRootFolder(userId, options);
+const getRootFolder = async (ownerId, options) => {
+    const folder = await folderRepository.getRootFolder(ownerId, options);
 
     return folder;
 };
 
 const getFolder = async (id, options) => {
-    const folder = await queries.get.userFolder(id, options);
+    const folder = await folderRepository.getSubFolder(id, options);
 
     return folder;
 };
 
-const deleteFolder = async (id, options) => {
-    const folder = await queries.destroy.userFolder(id, options);
+const deleteFolder = async (userId, folderId, cb) => {
+    const folder = await folderRepository.deleteFolder(userId, folderId, cb);
 
     return folder;
 };
