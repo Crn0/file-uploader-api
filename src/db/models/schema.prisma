@@ -70,10 +70,11 @@ model Folder {
 
 model File {
   id           Int          @id @default(autoincrement())
-  name         String       @db.VarChar(255)
   thumbnail    String       @db.VarChar(255)
+  name         String       @db.VarChar(255)
   publicId     String       @map("public_id") @db.VarChar(255)
   size         BigInt       @db.BigInt
+  version      String
   ownerId      Int          @map("owner_id")
   folderId     Int          @map("folder_id")
   createdAt    DateTime     @default(now()) @map("created_at")

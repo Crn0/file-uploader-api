@@ -3,6 +3,20 @@ import helpers from '../helpers/queries/index.js';
 
 const { optionFn } = helpers;
 
+const defaultOptions = {
+    id: true,
+    name: true,
+    thumbnail: true,
+    publicId: true,
+    size: true,
+    version: true,
+    resourceType: true,
+    deliveryType: true,
+    folderId: true,
+    createdAt: true,
+    updatedAt: true,
+};
+
 const createFile = async (
     folderId,
     name,
@@ -13,18 +27,7 @@ const createFile = async (
     size,
     options
 ) => {
-    const fileOption = optionFn(options, {
-        id: true,
-        name: true,
-        thumbnail: true,
-        publicId: true,
-        resourceType: true,
-        deliveryType: true,
-        size: true,
-        folderId: true,
-        createdAt: true,
-        updatedAt: true,
-    });
+    const fileOption = optionFn(options, defaultOptions);
 
     const file = await client.file.create({
         data: {
@@ -49,18 +52,7 @@ const createFile = async (
 };
 
 const getFile = async (id, options) => {
-    const fileOption = optionFn(options, {
-        id: true,
-        name: true,
-        thumbnail: true,
-        publicId: true,
-        resourceType: true,
-        deliveryType: true,
-        size: true,
-        folderId: true,
-        createdAt: true,
-        updatedAt: true,
-    });
+    const fileOption = optionFn(options, defaultOptions);
 
     const file = await client.file.findUnique({
         where: {
@@ -73,18 +65,7 @@ const getFile = async (id, options) => {
 };
 
 const getFileByFolderId = async (folderId, fileId, options) => {
-    const fileOption = optionFn(options, {
-        id: true,
-        name: true,
-        thumbnail: true,
-        publicId: true,
-        resourceType: true,
-        deliveryType: true,
-        size: true,
-        folderId: true,
-        createdAt: true,
-        updatedAt: true,
-    });
+    const fileOption = optionFn(options, defaultOptions);
 
     const file = await client.file.findUnique({
         where: {
