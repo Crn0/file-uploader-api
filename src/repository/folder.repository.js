@@ -74,9 +74,7 @@ const getRootFolder = async (id, options) => {
     const folder = await client.folder.findFirst({
         where: {
             ownerId: id,
-            systemetricFolders: {
-                none: {},
-            },
+            parentId: null,
         },
         select: {
             ...folderOptions,
@@ -176,8 +174,8 @@ const deleteFolder = async (userId, folderId, cb) => {
         where: {
             ownerId: userId,
             id: folderId,
-            systemetricFolders: {
-                some: {},
+            parentId: {
+                not: null,
             },
         },
         include: {
@@ -202,7 +200,7 @@ const deleteFolder = async (userId, folderId, cb) => {
     });
 
     await client.folder.delete({
-        where: { id: folderId, systemetricFolders: { some: {} } },
+        where: { id: folderId, parentId: { not: null } },
     });
 
     await cb(main.path);
