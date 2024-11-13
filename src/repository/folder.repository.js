@@ -1,33 +1,9 @@
 import client from '../db/client.js';
 import helpers from '../helpers/queries/index.js';
 
-const { optionFn, deleteNestedFolder } = helpers;
+const { deleteNestedFolder } = helpers;
 
 const createFolder = async (ownerId, name, path, options) => {
-    const folderOptions = optionFn(options, {
-        id: true,
-        name: true,
-        path: true,
-        type: true,
-        ownerId: true,
-        createdAt: true,
-        updatedAt: true,
-        folders: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-        files: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-    });
-
     const folder = await client.folder.create({
         data: {
             name,
@@ -38,8 +14,8 @@ const createFolder = async (ownerId, name, path, options) => {
                 },
             },
         },
-        select: {
-            ...folderOptions,
+        include: {
+            ...(typeof options === 'object' ? options : {}),
         },
     });
 
@@ -47,37 +23,13 @@ const createFolder = async (ownerId, name, path, options) => {
 };
 
 const getRootFolder = async (id, options) => {
-    const folderOptions = optionFn(options, {
-        id: true,
-        name: true,
-        path: true,
-        type: true,
-        ownerId: true,
-        createdAt: true,
-        updatedAt: true,
-        folders: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-        files: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-    });
-
     const folder = await client.folder.findFirst({
         where: {
             ownerId: id,
             parentId: null,
         },
-        select: {
-            ...folderOptions,
+        include: {
+            ...(typeof options === 'object' ? options : {}),
         },
     });
 
@@ -85,39 +37,15 @@ const getRootFolder = async (id, options) => {
 };
 
 const getSubFolder = async (folderId, options) => {
-    const folderOptions = optionFn(options, {
-        id: true,
-        name: true,
-        path: true,
-        type: true,
-        ownerId: true,
-        createdAt: true,
-        updatedAt: true,
-        folders: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-        files: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-    });
-
     const folder = await client.folder.findUnique({
         where: {
             id: folderId,
-            systemetricFolders: {
-                some: {},
+            parentId: {
+                not: null,
             },
         },
-        select: {
-            ...folderOptions,
+        include: {
+            ...(typeof options === 'object' ? options : {}),
         },
     });
 
@@ -125,40 +53,16 @@ const getSubFolder = async (folderId, options) => {
 };
 
 const getSubFolderByUserId = async (userId, folderId, options) => {
-    const folderOptions = optionFn(options, {
-        id: true,
-        name: true,
-        path: true,
-        type: true,
-        ownerId: true,
-        createdAt: true,
-        updatedAt: true,
-        folders: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-        files: {
-            orderBy: {
-                createdAt: 'asc',
-            },
-            take: 10,
-            skip: 0,
-        },
-    });
-
     const folder = await client.folder.findUnique({
         where: {
             ownerId: userId,
             id: folderId,
-            systemetricFolders: {
-                some: {},
+            parentId: {
+                not: null,
             },
         },
-        select: {
-            ...folderOptions,
+        include: {
+            ...(typeof options === 'object' ? options : {}),
         },
     });
 
