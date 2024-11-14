@@ -60,7 +60,7 @@ const getRootFolder = async (id, options) => {
     return folder;
 };
 
-const getFolderRelation = async (ownerId, folderId, options) => {
+const getFolderRelation = async (ownerId, folderId) => {
     const folder = await client.folder.findMany({
         where: {
             ownerId,
@@ -68,21 +68,20 @@ const getFolderRelation = async (ownerId, folderId, options) => {
                 lte: folderId,
             },
         },
-        include: {
-            ...(typeof options === 'object' ? options : {}),
+        select: {
+            id: true,
+            name: true,
+            parentId: true,
         },
     });
 
     return folder;
 };
 
-const getSubFolder = async (folderId, options) => {
+const getFolder = async (folderId, options) => {
     const folder = await client.folder.findUnique({
         where: {
             id: folderId,
-            parentId: {
-                not: null,
-            },
         },
         include: {
             ...(typeof options === 'object' ? options : {}),
@@ -92,14 +91,11 @@ const getSubFolder = async (folderId, options) => {
     return folder;
 };
 
-const getSubFolderByUserId = async (userId, folderId, options) => {
+const getFolderByUserId = async (userId, folderId, options) => {
     const folder = await client.folder.findUnique({
         where: {
             ownerId: userId,
             id: folderId,
-            parentId: {
-                not: null,
-            },
         },
         include: {
             ...(typeof options === 'object' ? options : {}),
@@ -154,8 +150,8 @@ export default {
     createFolder,
     createSubFolder,
     getRootFolder,
-    getSubFolder,
-    getSubFolderByUserId,
+    getFolder,
+    getFolderByUserId,
     getFolderRelation,
     deleteFolder,
 };

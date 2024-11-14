@@ -30,13 +30,13 @@ const getRootFolder = async (ownerId, options) => {
 };
 
 const getFolder = async (id, options) => {
-    const folder = await folderRepository.getSubFolder(id, options);
+    const folder = await folderRepository.getFolder(id, options);
 
     return folder;
 };
 
-const getSubFolderByUserId = async (userId, folderId, options) => {
-    const folder = await folderRepository.getSubFolderByUserId(
+const getFolderByUserId = async (userId, folderId, options) => {
+    const folder = await folderRepository.getFolderByUserId(
         userId,
         folderId,
         options
@@ -45,12 +45,8 @@ const getSubFolderByUserId = async (userId, folderId, options) => {
     return folder;
 };
 
-const getFolderRelation = async (ownerId, parentId, options) => {
-    const folder = await folderRepository.getFolderRelation(
-        ownerId,
-        parentId,
-        options
-    );
+const getFolderRelation = async (ownerId, folderId) => {
+    const folder = await folderRepository.getFolderRelation(ownerId, folderId);
 
     return folder;
 };
@@ -66,7 +62,7 @@ export default {
     createSubFolder,
     getRootFolder,
     getFolder,
-    getSubFolderByUserId,
+    getFolderByUserId,
     getFolderRelation,
     deleteFolder,
 };
