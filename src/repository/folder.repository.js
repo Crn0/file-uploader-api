@@ -22,11 +22,51 @@ const createFolder = async (ownerId, name, path, options) => {
     return folder;
 };
 
+const createSubFolder = async (ownerId, parentId, name, path, options) => {
+    const folder = await client.folder.create({
+        data: {
+            name,
+            path,
+            owner: {
+                connect: {
+                    id: ownerId,
+                },
+            },
+            parentFolder: {
+                connect: {
+                    id: parentId,
+                },
+            },
+        },
+        include: {
+            ...(typeof options === 'object' ? options : {}),
+        },
+    });
+
+    return folder;
+};
+
 const getRootFolder = async (id, options) => {
     const folder = await client.folder.findFirst({
         where: {
             ownerId: id,
             parentId: null,
+        },
+        include: {
+            ...(typeof options === 'object' ? options : {}),
+        },
+    });
+
+    return folder;
+};
+
+const getFolderRelation = async (ownerId, folderId, options) => {
+    const folder = await client.folder.findMany({
+        where: {
+            ownerId,
+            id: {
+                lte: folderId,
+            },
         },
         include: {
             ...(typeof options === 'object' ? options : {}),
@@ -112,8 +152,10 @@ const deleteFolder = async (userId, folderId, cb) => {
 
 export default {
     createFolder,
+    createSubFolder,
     getRootFolder,
     getSubFolder,
     getSubFolderByUserId,
+    getFolderRelation,
     deleteFolder,
 };
