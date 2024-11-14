@@ -77,7 +77,7 @@ const authenticateLocal = [
             (err, user, info) => {
                 if (err) return next(new AuthError(err, 401));
                 if (!user || info)
-                    return next(new AuthError('Authentication Failed', 401));
+                    return next(new AuthError(info.message, 401));
 
                 req.user = user;
 
