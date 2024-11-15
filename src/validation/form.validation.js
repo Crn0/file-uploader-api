@@ -1,12 +1,11 @@
 import { body } from 'express-validator';
 import userRepository from '../repository/user.repository.js';
-import client from '../db/client.js';
 
 const username = () =>
     body('username')
         .trim()
         .notEmpty()
-        .withMessage('Username name must not be empty')
+        .withMessage('Username cannot be empty')
         .custom(async (val) => {
             const regex = /^[a-zA-Z0-9_]+$/;
             // https://regexr.com/86mur
@@ -14,7 +13,7 @@ const username = () =>
             return regex.test(val);
         })
         .withMessage(
-            'Username must not contain special characters except underscore'
+            'Username can only contain letters, numbers, and underscores'
         )
         .custom(async (val) => {
             const userExist = await userRepository.getUserByUsername(val);
@@ -35,7 +34,7 @@ const email = (isSignUp) => {
                 gmail_lowercase: true,
             })
             .notEmpty()
-            .withMessage('Email name must not be empty')
+            .withMessage('Email cannot be empty')
             .custom(async (val) => {
                 const userExist = await userRepository.getUserByEmail(val);
 
@@ -52,7 +51,7 @@ const email = (isSignUp) => {
             gmail_lowercase: true,
         })
         .notEmpty()
-        .withMessage('Email name must not be empty');
+        .withMessage('Email cannot be empty');
 };
 
 const password = () =>
