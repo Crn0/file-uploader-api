@@ -7,7 +7,7 @@ import authService from '../../services/auth.service.js';
 import userService from '../../services/user.service.js';
 import folderService from '../../services/folder.service.js';
 import StorageFactory from '../../storages/index.js';
-import FormError from '../../errors/form.error.js';
+import FieldError from '../../errors/field.error.js';
 import AuthError from '../../errors/auth.error.js';
 
 const { NODE_ENV } = process.env;
@@ -32,7 +32,7 @@ const createUserLocal = asyncHandler(async (req, res, next) => {
             };
         });
 
-        throw new FormError('Validation Failed', errorFields);
+        throw new FieldError('Validation Failed', errorFields);
     }
 
     const user = await authService.signupLocal(req.body);
@@ -64,7 +64,7 @@ const authenticateLocal = [
                 };
             });
 
-            throw new FormError('Validation Failed', errorFields);
+            throw new FieldError('Validation Failed', errorFields);
         }
 
         next();

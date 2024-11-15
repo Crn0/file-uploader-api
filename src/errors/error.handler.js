@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import BaseError from './base.error.js';
-import FormError from './form.error.js';
+import FieldError from './field.error.js';
 
 class ErrorHandler {
     static handleError(error, res) {
@@ -8,7 +8,7 @@ class ErrorHandler {
             console.log(error);
         }
 
-        if (error instanceof FormError) {
+        if (error instanceof FieldError) {
             return res.status(error.httpCode).json({
                 code: error.httpCode,
                 errors: error.errors || null,
