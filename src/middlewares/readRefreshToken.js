@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import AuthError from '../errors/auth.error.js';
 
-const verifyRefreshToken = (req, res, next) => {
+const readRefreshToken = (req, res, next) => {
     const refreshToken = req.cookies.refresh_token;
     if (!refreshToken) {
         console.log('There is no refresh token');
@@ -28,4 +28,4 @@ const verifyRefreshToken = (req, res, next) => {
     );
 };
 
-export default verifyRefreshToken;
+export default readRefreshToken;
