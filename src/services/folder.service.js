@@ -29,8 +29,8 @@ const getRootFolder = async (ownerId, options) => {
     return folder;
 };
 
-const getFolder = async (id, options) => {
-    const folder = await folderRepository.getFolder(id, options);
+const getSubFolder = async (id, options) => {
+    const folder = await folderRepository.getSubFolder(id, options);
 
     return folder;
 };
@@ -69,8 +69,11 @@ const getResourcesTotalCount = async (ownerId, folderId) => {
     return total;
 };
 
-const deleteFolder = async (userId, folderId) => {
-    const folder = await folderRepository.deleteFolder(userId, folderId);
+const deleteFolder = async (userId, folderObj, cb) => {
+    if (typeof cb !== 'function')
+        throw new Error(`cb is ${typeof cb}; expected a function`);
+
+    const folder = await folderRepository.deleteFolder(folderObj, cb);
 
     return folder;
 };
@@ -79,7 +82,7 @@ export default {
     createFolder,
     createSubFolder,
     getRootFolder,
-    getFolder,
+    getSubFolder,
     getFolderByUserId,
     getFolderNameCountByUserId,
     getFolderPath,

@@ -78,10 +78,13 @@ const getFolderPath = async (ownerId, folderId) => {
     return folder;
 };
 
-const getFolder = async (folderId, options) => {
+const getSubFolder = async (folderId, options) => {
     const folder = await client.folder.findUnique({
         where: {
             id: folderId,
+            parentId: {
+                not: null,
+            },
         },
         include: {
             ...(typeof options === 'object' ? options : {}),
@@ -105,6 +108,17 @@ const getFolderByUserId = async (userId, folderId, options) => {
     return folder;
 };
 
+const getFolderNameCountByUserId = async (ownerId, name) => {
+    const count = await client.folder.count({
+        where: {
+            ownerId,
+            name,
+        },
+    });
+
+    return count;
+};
+
 const getResourcesTotalCount = async (ownerId, folderId) => {
     const folders = await client.folder.count({
         where: {
@@ -121,54 +135,46 @@ const getResourcesTotalCount = async (ownerId, folderId) => {
     return Math.floor(folders + files);
 };
 
-const deleteFolder = async (userId, folderId, cb) => {
-    if (typeof cb !== 'function') {
-        throw new Error(`cb typeof ${typeof cb}; expected type of function`);
-    }
-
-    const main = await client.folder.findUnique({
+const deleteFolder = async (folderObj, cb) => {
+    const parent = await client.folder.findUnique({
         where: {
-            ownerId: userId,
-            id: folderId,
-            parentId: {
-                not: null,
-            },
+            id: folderObj.id,
         },
         include: {
             folders: {
                 select: {
-                    id: true,
-                },
-            },
-            files: {
-                select: {
-                    publicId: true,
+                    id: folderObj.id,
+                    path: true,
                 },
             },
         },
     });
 
-    const subFolders = main?.folders;
+    if (typeof cb === 'function') {
+        cb(folderObj.path);
+    }
 
-    // RECURSIVELY DELETE SUB FOLDERS AND ITS FILES
-    subFolders?.map(async (folder) => {
-        await deleteNestedFolder(folder, cb);
+    parent.folders?.map?.(async (folder) => {
+        if (folder) {
+            await deleteFolder(folder, cb);
+        }
     });
 
-    await client.folder.delete({
-        where: { id: folderId, parentId: { not: null } },
+    return client.folder.delete({
+        where: {
+            id: folderObj.id,
+        },
     });
-
-    await cb(main.path);
 };
 
 export default {
     createFolder,
     createSubFolder,
     getRootFolder,
-    getFolder,
+    getSubFolder,
     getFolderByUserId,
     getFolderPath,
     getResourcesTotalCount,
+    getFolderNameCountByUserId,
     deleteFolder,
 };
