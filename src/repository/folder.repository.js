@@ -105,6 +105,33 @@ const getFolderByUserId = async (userId, folderId, options) => {
     return folder;
 };
 
+const getResourcesTotalCount = async (ownerId, folderId) => {
+    const folders = await client.folder.count({
+        where: {
+            parentId: folderId,
+        },
+    });
+
+    const files = await client.file.count({
+        where: {
+            folderId,
+        },
+    });
+
+    return Math.floor(folders + files);
+};
+
+const getFolderNameCountByUserId = async (ownerId, name) => {
+    const foldersCount = await client.folder.count({
+        where: {
+            ownerId,
+            name,
+        },
+    });
+
+    return foldersCount;
+};
+
 const deleteFolder = async (userId, folderId, cb) => {
     if (typeof cb !== 'function') {
         throw new Error(`cb typeof ${typeof cb}; expected type of function`);
@@ -153,5 +180,7 @@ export default {
     getFolder,
     getFolderByUserId,
     getFolderRelation,
+    getResourcesTotalCount,
+    getFolderNameCountByUserId,
     deleteFolder,
 };

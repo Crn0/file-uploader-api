@@ -45,10 +45,28 @@ const getFolderByUserId = async (userId, folderId, options) => {
     return folder;
 };
 
+const getFolderNameCountByUserId = async (userId, folderId) => {
+    const count = await folderRepository.getFolderNameCountByUserId(
+        userId,
+        folderId
+    );
+
+    return count;
+};
+
 const getFolderRelation = async (ownerId, folderId) => {
     const folder = await folderRepository.getFolderRelation(ownerId, folderId);
 
     return folder;
+};
+
+const getResourcesTotalCount = async (ownerId, folderId) => {
+    const total = await folderRepository.getResourcesTotalCount(
+        ownerId,
+        folderId
+    );
+
+    return total;
 };
 
 const deleteFolder = async (userId, folderId, cb) => {
@@ -63,6 +81,8 @@ export default {
     getRootFolder,
     getFolder,
     getFolderByUserId,
+    getFolderNameCountByUserId,
     getFolderRelation,
+    getResourcesTotalCount,
     deleteFolder,
 };
