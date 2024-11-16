@@ -11,6 +11,8 @@ const createFolder = async (folderPath) => {
 
         if (e instanceof CloudinrayError) throw e;
 
+        if (typeof e.code === 'string') throw new Error(e.message);
+
         if (e.message) {
             throw new CloudinrayError(e.message, e.http_code);
         }
@@ -46,11 +48,13 @@ const getFilesByAssetFolder = async (folderPath) => {
     try {
         const res = await cloudinary.api.resources_by_asset_folder(folderPath);
 
-        return res;
+        return res.resources;
     } catch (e) {
         const { error } = e;
 
         if (e instanceof CloudinrayError) throw e;
+
+        if (typeof e.code === 'string') throw new Error(e.message);
 
         if (e.message) {
             throw new CloudinrayError(e.message, e.http_code);
@@ -73,6 +77,8 @@ const destroyFile = async (publicId, type) => {
 
         if (e instanceof CloudinrayError) throw e;
 
+        if (typeof e.code === 'string') throw new Error(e.message);
+
         if (e.message) {
             throw new CloudinrayError(e.message, e.http_code);
         }
@@ -83,14 +89,11 @@ const destroyFile = async (publicId, type) => {
 
 const destroyFolder = async (folderPath) => {
     try {
-        const fileRes = await getFilesByAssetFolder(folderPath);
-        const files = fileRes.resources;
+        const files = await getFilesByAssetFolder(folderPath);
 
-        if (files.length !== 0) {
-            files.map(async (file) => {
-                await destroyFile(file.public_id, file.resource_type);
-            });
-        }
+        files.map(async (file) => {
+            await destroyFile(file.public_id, file.resource_type);
+        });
 
         const folder = await cloudinary.api.delete_folder(folderPath);
 
@@ -99,6 +102,8 @@ const destroyFolder = async (folderPath) => {
         const { error } = e;
 
         if (e instanceof CloudinrayError) throw e;
+
+        if (typeof e.code === 'string') throw new Error(e.message);
 
         if (e.message) {
             throw new CloudinrayError(e.message, e.http_code);
