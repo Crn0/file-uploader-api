@@ -60,7 +60,7 @@ const getRootFolder = async (id, options) => {
     return folder;
 };
 
-const getFolderRelation = async (ownerId, folderId) => {
+const getFolderPath = async (ownerId, folderId) => {
     const folder = await client.folder.findMany({
         where: {
             ownerId,
@@ -121,17 +121,6 @@ const getResourcesTotalCount = async (ownerId, folderId) => {
     return Math.floor(folders + files);
 };
 
-const getFolderNameCountByUserId = async (ownerId, name) => {
-    const foldersCount = await client.folder.count({
-        where: {
-            ownerId,
-            name,
-        },
-    });
-
-    return foldersCount;
-};
-
 const deleteFolder = async (userId, folderId, cb) => {
     if (typeof cb !== 'function') {
         throw new Error(`cb typeof ${typeof cb}; expected type of function`);
@@ -179,8 +168,7 @@ export default {
     getRootFolder,
     getFolder,
     getFolderByUserId,
-    getFolderRelation,
+    getFolderPath,
     getResourcesTotalCount,
-    getFolderNameCountByUserId,
     deleteFolder,
 };
