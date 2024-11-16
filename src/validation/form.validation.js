@@ -73,7 +73,11 @@ const confirmPassword = () =>
         .custom((val, { req }) => val === req.body.password)
         .withMessage('Password does not match');
 
+const resourceName = () =>
+    body('name').trim().notEmpty().withMessage('Name cannot be empty');
+
 export default {
     signUp: [username(), email(true), password(), confirmPassword()],
     login: [email(false), password()],
+    resourceEntity: resourceName(),
 };
