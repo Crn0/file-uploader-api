@@ -140,7 +140,7 @@ const login = asyncHandler(async (req, res, _) => {
         res.clearCookie('refresh_token');
 
         const decodeToken = jwt.decode(oldToken);
-        const expiresIn = new Date(decodeToken.exp);
+        const expiresIn = new Date(decodeToken.exp * 1000);
 
         const tokenExist = await authService.checkValidToken(decodeToken.jti);
 
