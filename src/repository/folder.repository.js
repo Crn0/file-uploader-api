@@ -1,7 +1,4 @@
 import client from '../db/client.js';
-import helpers from '../helpers/queries/index.js';
-
-const { deleteNestedFolder } = helpers;
 
 const createFolder = async (ownerId, name, path, options) => {
     const folder = await client.folder.create({
