@@ -78,13 +78,10 @@ const getFolderPath = async (ownerId, folderId) => {
     return folder;
 };
 
-const getSubFolder = async (folderId, options) => {
+const getFolder = async (folderId, options) => {
     const folder = await client.folder.findUnique({
         where: {
             id: folderId,
-            parentId: {
-                not: null,
-            },
         },
         include: {
             ...(typeof options === 'object' ? options : {}),
@@ -171,7 +168,7 @@ export default {
     createFolder,
     createSubFolder,
     getRootFolder,
-    getSubFolder,
+    getFolder,
     getFolderByUserId,
     getFolderPath,
     getResourcesTotalCount,

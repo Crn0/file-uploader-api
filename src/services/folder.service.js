@@ -29,8 +29,8 @@ const getRootFolder = async (ownerId, options) => {
     return folder;
 };
 
-const getSubFolder = async (id, options) => {
-    const folder = await folderRepository.getSubFolder(id, options);
+const getFolder = async (id, options) => {
+    const folder = await folderRepository.getFolder(id, options);
 
     return folder;
 };
@@ -82,7 +82,7 @@ export default {
     createFolder,
     createSubFolder,
     getRootFolder,
-    getSubFolder,
+    getFolder,
     getFolderByUserId,
     getFolderNameCountByUserId,
     getFolderPath,

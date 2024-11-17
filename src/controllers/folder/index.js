@@ -265,7 +265,7 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
         throw new FieldError('Validation Failed', errorFields, 400);
     }
 
-    const folderExist = await folderService.getSubFolder(folderId);
+    const folderExist = await folderService.getFolder(folderId);
     const ownerId = folderExist?.ownerId;
 
     if (!folderExist) {
