@@ -30,8 +30,8 @@ const meByEmail = async (email) => userRepository.getUserByEmail(email);
 const meByUsername = async (username) =>
     userRepository.getUserByUsername(username);
 
-const meByOpenId = async (provider, tokenId) =>
-    userRepository.getUserByOpenId(provider, tokenId);
+const meByOpenId = async (provider, tokenId, options) =>
+    userRepository.getUserByOpenId(provider, tokenId, options);
 
 const updateUsername = async (id, newUsername, options) => {
     const patchedUser = await userRepository.patchUsername(
