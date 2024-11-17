@@ -4,37 +4,15 @@ import { validationResult } from 'express-validator';
 import folderService from '../../services/folder.service.js';
 import storageFactory from '../../storages/index.js';
 import helpers from '../../helpers/controllers/index.js';
+import queryValidKeys from '../../configs/queryValidKeys/index.js';
 import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
 
 const { optionIncludes, pagination } = helpers;
 
 const folderValidKeys = {
-    folders: {
-        id: true,
-        name: true,
-        path: true,
-        type: true,
-        ownerId: true,
-        createdAt: true,
-        updatedAt: true,
-        parentId: true,
-        folders: true,
-    },
-    files: {
-        id: true,
-        thumnail: true,
-        name: true,
-        publicId: true,
-        size: true,
-        version: true,
-        ownerId: true,
-        folderId: true,
-        createdAt: true,
-        updatedAt: true,
-        deliveryType: true,
-        resourceType: true,
-    },
+    folders: queryValidKeys.folders,
+    files: queryValidKeys.files,
 };
 
 const createSubFolder = asyncHandler(async (req, res, _) => {
