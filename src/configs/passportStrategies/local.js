@@ -6,15 +6,7 @@ const options = { usernameField: 'email', passwordField: 'password' };
 
 const verifyCb = async (email, password, done) => {
     try {
-        const user = await userRepository.getUserByEmail(email, {
-            id: true,
-            username: true,
-            email: true,
-            role: true,
-            password: true,
-            createdAt: true,
-            updatedAt: true,
-        });
+        const user = await userRepository.getUserByEmail(email);
 
         if (!user)
             return done(null, false, { message: 'Invalid email or password' });
