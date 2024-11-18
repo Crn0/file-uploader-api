@@ -3,7 +3,6 @@ import client from '../db/client.js';
 const createFile = async (
     folderId,
     name,
-    thumbnail,
     publicId,
     resourceType,
     deliveryType,
@@ -13,7 +12,6 @@ const createFile = async (
     const file = await client.file.create({
         data: {
             name,
-            thumbnail,
             publicId,
             resourceType,
             deliveryType,

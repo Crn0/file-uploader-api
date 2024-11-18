@@ -3,7 +3,6 @@ import fileRepositroy from '../repository/file.repositroy.js';
 const createFile = async (
     folderId,
     name,
-    thumbnail,
     publicId,
     resourceType,
     deliveryType,
@@ -13,7 +12,6 @@ const createFile = async (
     const file = await fileRepositroy.createFile(
         folderId,
         name,
-        thumbnail,
         publicId,
         resourceType,
         deliveryType,

@@ -71,7 +71,6 @@ model Folder {
 
 model File {
   id           Int          @id @default(autoincrement())
-  thumbnail    String       @db.VarChar(255)
   name         String       @db.VarChar(255)
   publicId     String       @map("public_id") @db.VarChar(255)
   size         BigInt       @db.BigInt
