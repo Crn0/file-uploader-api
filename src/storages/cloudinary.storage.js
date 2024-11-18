@@ -27,7 +27,6 @@ const createFile = async (folder, file, type, eagerOptions) => {
             folder,
             resource_type: type,
             eager: eagerOptions,
-            use_filename: true,
         });
 
         return res;
