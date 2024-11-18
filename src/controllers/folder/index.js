@@ -38,14 +38,7 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
         throw new FieldError('Validation Failed', errorFields, 400);
     }
 
-    const rootFolder = await folderService.getRootFolder(userId);
     const parentFolder = await folderService.getFolder(folderId);
-
-    if (!rootFolder)
-        throw new APIError(
-            'The resource could not be found on the server',
-            404
-        );
 
     if (!parentFolder)
         throw new APIError(
@@ -58,7 +51,7 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
         userId,
         name
     );
-    const path = `${rootFolder.path}/${name}_${nameCount + 1}`;
+    const path = `${parentFolder.path}/${name}_${nameCount + 1}`;
 
     const folder = await folderService.createSubFolder(
         userId,
@@ -244,7 +237,6 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
     }
 
     const folderExist = await folderService.getFolder(folderId);
-    const ownerId = folderExist?.ownerId;
 
     if (!folderExist) {
         throw new APIError(
@@ -253,7 +245,7 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
         );
     }
 
-    if (userId !== ownerId) {
+    if (userId !== folderExist.ownerId) {
         if (req.user.role !== 'admin')
             throw new APIError(
                 'You do not have the required permissions to delete this resource',
@@ -261,11 +253,9 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
             );
     }
 
-    await folderService.deleteFolder(
-        ownerId,
-        folderExist,
-        storage.destroyFolder
-    );
+    await storage.destroyNestedFiles(folderExist.path);
+
+    await folderService.deleteFolder(folderExist, storage.destroyFolder);
 
     res.sendStatus(204);
 });

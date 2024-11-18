@@ -64,6 +64,26 @@ const getFilesByAssetFolder = async (folderPath) => {
     }
 };
 
+const getSubFolders = async (folderPath) => {
+    try {
+        const { folders } = await cloudinary.api.sub_folders(folderPath);
+
+        return folders;
+    } catch (e) {
+        const { error } = e;
+
+        if (e instanceof CloudinrayError) throw e;
+
+        if (typeof e.code === 'string') throw new Error(e.message);
+
+        if (e.message) {
+            throw new CloudinrayError(e.message, e.http_code);
+        }
+
+        throw new CloudinrayError(error.message, error.http_code);
+    }
+};
+
 const destroyFile = async (publicId, type) => {
     try {
         const res = await cloudinary.uploader.destroy(publicId, {
@@ -87,17 +107,41 @@ const destroyFile = async (publicId, type) => {
     }
 };
 
-const destroyFolder = async (folderPath) => {
+const destroyNestedFiles = async (folderPath) => {
     try {
         const files = await getFilesByAssetFolder(folderPath);
 
-        files.map(async (file) => {
-            await destroyFile(file.public_id, file.resource_type);
-        });
+        const subFolders = await getSubFolders(folderPath);
 
-        const folder = await cloudinary.api.delete_folder(folderPath);
+        await Promise.all(
+            subFolders?.map?.(async (folder) => {
+                await destroyNestedFiles(folder.path);
+            })
+        );
 
-        return folder;
+        return Promise.all(
+            files?.map?.(async (file) => {
+                await destroyFile(file.public_id, file.resource_type);
+            })
+        );
+    } catch (e) {
+        const { error } = e;
+
+        if (e instanceof CloudinrayError) throw e;
+
+        if (typeof e.code === 'string') throw new Error(e.message);
+
+        if (e.message) {
+            throw new CloudinrayError(e.message, e.http_code);
+        }
+
+        throw new CloudinrayError(error.message, error.http_code);
+    }
+};
+
+const destroyFolder = async (folderPath) => {
+    try {
+        return cloudinary.api.delete_folder(folderPath);
     } catch (e) {
         const { error } = e;
 
@@ -116,6 +160,8 @@ const destroyFolder = async (folderPath) => {
 export default {
     createFolder,
     createFile,
+    getSubFolders,
     destroyFolder,
+    destroyNestedFiles,
     destroyFile,
 };
