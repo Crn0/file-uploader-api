@@ -80,7 +80,9 @@ model File {
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @default(now()) @map("updated_at")
   type         EntityType   @default(file)
+  extension    Extension
   deliveryType DeliveryType @default(upload) @map("delivery_type")
+  resourceType ResourceType @map("resource_type")
   owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder       Folder       @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
@@ -97,13 +99,27 @@ enum Role {
   admin
 }
 
+enum EntityType {
+  folder
+  file
+}
+
+enum Extension {
+  unknown
+  png
+  jpeg
+  jpg
+  webp
+  epub
+}
+
 enum DeliveryType {
   upload
   private
   authenticated
 }
 
-enum EntityType {
-  folder
-  file
+enum ResourceType {
+  image
+  raw
 }

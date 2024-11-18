@@ -2,20 +2,24 @@ import fileRepositroy from '../repository/file.repositroy.js';
 
 const createFile = async (
     folderId,
+    ownerId,
     name,
     publicId,
     resourceType,
     deliveryType,
     size,
+    version,
     options
 ) => {
     const file = await fileRepositroy.createFile(
         folderId,
+        ownerId,
         name,
         publicId,
         resourceType,
         deliveryType,
         size,
+        version,
         options
     );
 

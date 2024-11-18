@@ -2,23 +2,33 @@ import client from '../db/client.js';
 
 const createFile = async (
     folderId,
+    ownerId,
     name,
     publicId,
+    size,
+    version,
+    extension,
     resourceType,
     deliveryType,
-    size,
     options
 ) => {
     const file = await client.file.create({
         data: {
             name,
             publicId,
+            size,
+            version,
+            extension,
             resourceType,
             deliveryType,
-            size,
-            Folder: {
+            folder: {
                 connect: {
                     id: folderId,
+                },
+            },
+            owner: {
+                connect: {
+                    id: ownerId,
                 },
             },
         },
