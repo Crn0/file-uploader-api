@@ -53,17 +53,17 @@ model BlackListToken {
 }
 
 model Folder {
-  id           Int          @id @default(autoincrement())
-  name         String       @db.VarChar(255)
-  path         String       @db.VarChar(255)
-  ownerId      Int          @map("owner_id")
-  parentId     Int?         @map("parent_id")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @default(now()) @map("updated_at")
-  type         ResourceType @default(folder)
-  owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  parentFolder Folder?      @relation("FolderSubfolders", fields: [parentId], references: [id])
-  folders      Folder[]     @relation("FolderSubfolders")
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  path         String     @db.VarChar(255)
+  ownerId      Int        @map("owner_id")
+  parentId     Int?       @map("parent_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+  type         EntityType @default(folder)
+  owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  parentFolder Folder?    @relation("FolderSubfolders", fields: [parentId], references: [id])
+  folders      Folder[]   @relation("FolderSubfolders")
   files        File[]
 
   @@map("folders")
@@ -79,8 +79,8 @@ model File {
   folderId     Int          @map("folder_id")
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @default(now()) @map("updated_at")
+  type         EntityType   @default(file)
   deliveryType DeliveryType @default(upload) @map("delivery_type")
-  resourceType ResourceType @default(unknown) @map("resource_type")
   owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder       Folder       @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
@@ -103,12 +103,7 @@ enum DeliveryType {
   authenticated
 }
 
-enum ResourceType {
-  unknown
+enum EntityType {
   folder
-  png
-  jpeg
-  jpg
-  webp
-  epub
+  file
 }
