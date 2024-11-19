@@ -145,7 +145,7 @@ const deleteFolder = async (folderObj, cb) => {
     });
 
     if (typeof cb === 'function') {
-        cb(folderObj.path);
+        await cb(folderObj.path);
     }
 
     parent.folders?.map?.(async (folder) => {
