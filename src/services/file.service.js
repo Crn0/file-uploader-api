@@ -44,8 +44,10 @@ const getFileByFolderId = async (folderId, fileId, options) => {
     return file;
 };
 
-const deleteFile = async (id) => {
+const deleteFile = async (id, cb) => {
     const file = await fileRepositroy.deleteFile(id);
+
+    await cb(file.publicId, file.resourceType);
 
     return file;
 };
