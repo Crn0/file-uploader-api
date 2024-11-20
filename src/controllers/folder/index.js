@@ -240,7 +240,7 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
 
     if (!folderExist) {
         throw new APIError(
-            'The item you are attempting to delete could not be found. Please check the resource ID',
+            'The resource you are attempting to delete could not be found. Please check the resource ID',
             404
         );
     }
