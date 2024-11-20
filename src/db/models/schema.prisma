@@ -73,8 +73,8 @@ model File {
   id           Int          @id @default(autoincrement())
   name         String       @db.VarChar(255)
   publicId     String       @map("public_id") @db.VarChar(255)
-  size         BigInt       @db.BigInt
-  version      String
+  size         Int          @db.Integer
+  version      Int          @db.Integer
   ownerId      Int          @map("owner_id")
   folderId     Int          @map("folder_id")
   createdAt    DateTime     @default(now()) @map("created_at")
