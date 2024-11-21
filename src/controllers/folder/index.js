@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
 import folderService from '../../services/folder.service.js';
 import storageFactory from '../../storages/index.js';
 import helpers from '../../helpers/controllers/index.js';
@@ -66,6 +67,58 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
     res.status(200).json({
         folder,
     });
+});
+
+const generateLink = asyncHandler(async (req, res, _) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        const errorFields = errors.array().map((err) => {
+            const { type, msg: message, path: field } = err;
+
+            return {
+                type,
+                field,
+                message,
+            };
+        });
+
+        throw new FieldError('Validation Failed', errorFields, 400);
+    }
+
+    const { user } = req;
+    const folderId = Number(req.params.folderId);
+
+    const folder = await folderService.getSubFolder(folderId);
+
+    if (!folder)
+        throw new APIError(
+            'The resource could not be found on the server',
+            404
+        );
+
+    if (folder.ownerId === user.id) {
+        const token = jwt.sign(
+            {
+                id: folder.id,
+            },
+            process.env.FOLDER_SHARE_URL_SECRET,
+            {
+                expiresIn: req.query.expiresIn || 60 * 60, // default one hour
+            }
+        );
+
+        const url = `${process.env.SERVER_URL}/api/v1/share/folders/${token}`;
+
+        res.status(200).json({
+            url,
+        });
+    } else {
+        throw new APIError(
+            'Permission Denied: You do not have the necessary permissions to access this resource',
+            403
+        );
+    }
 });
 
 const getRootFolder = asyncHandler(async (req, res, _) => {
@@ -261,6 +314,7 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
 export default {
     createSubFolder,
     getRootFolder,
+    generateLink,
     getFolder,
     deleteFolder,
 };

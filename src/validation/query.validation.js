@@ -47,6 +47,7 @@ export default {
         const methodName = method.toLowerCase();
         const reqObject = {
             root: includes(true),
+            'get:link': [includes(false), expiresIn()],
             get: includes(true),
             post: includes(true),
             delete: includes(false),

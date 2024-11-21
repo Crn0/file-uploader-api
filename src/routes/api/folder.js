@@ -24,6 +24,14 @@ router.get(
     controllers.getFolder
 );
 
+router.get(
+    '/:folderId/link',
+    middlewares.protectedRoute,
+    paramValidation.entityId('folderId'),
+    queryValidation.folder('get:link'),
+    controllers.generateLink
+);
+
 router.post(
     '/:folderId/sub-folder',
     middlewares.protectedRoute,
