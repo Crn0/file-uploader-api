@@ -237,7 +237,7 @@ const getFileContent = asyncHandler(async (req, res, _) => {
             404
         );
 
-    if (true) {
+    if (file.ownerId === user.id || user.role === 'admin') {
         const storage = storageFactory().createStorage('cloudinary');
 
         const fileURL = storage.fileDownload(file);
