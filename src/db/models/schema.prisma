@@ -47,7 +47,7 @@ model BlackListToken {
   jwtId     String   @unique() @map("jwt_id") @db.VarChar(36)
   userId    Int      @map("user_id")
   expiresIn DateTime @map("expires_in")
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("blacklist_tokens")
 }
