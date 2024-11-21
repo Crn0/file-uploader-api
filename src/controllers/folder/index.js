@@ -139,7 +139,6 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
 const getFolder = asyncHandler(async (req, res, _) => {
     const { user } = req;
     const folderId = Number(req.params.folderId);
-    const ownerId = Number(req.query.ownerId);
     const userId = Number(user.id);
 
     const errors = validationResult(req);
@@ -156,14 +155,6 @@ const getFolder = asyncHandler(async (req, res, _) => {
         });
 
         throw new FieldError('Validation Failed', errorFields, 400);
-    }
-
-    if (ownerId !== userId) {
-        if (user.role !== 'admin')
-            throw new APIError(
-                'Permission Denied: You do not have the necessary permissions to access this resource',
-                403
-            );
     }
 
     const options = optionIncludes(req.query, folderValidKeys);
@@ -186,33 +177,39 @@ const getFolder = asyncHandler(async (req, res, _) => {
         options.files.take = take;
     }
 
-    const folder = await folderService.getFolderByUserId(
-        ownerId,
-        folderId,
-        options
-    );
+    const folder = await folderService.getFolder(folderId, options);
 
-    if (!folder)
-        throw new APIError(
-            'The resource could not be found on the server',
-            404
+    if (folder.id === userId || user.role !== 'admin') {
+        if (!folder)
+            throw new APIError(
+                'The resource could not be found on the server',
+                404
+            );
+
+        const path = await folderService.getFolderPath(folder.id, folderId);
+
+        const total = await folderService.getResourcesTotalCount(
+            folder.id,
+            folderId
         );
 
-    const path = await folderService.getFolderPath(ownerId, folderId);
-
-    const total = await folderService.getResourcesTotalCount(ownerId, folderId);
-
-    return res.status(200).json({
-        path,
-        data: {
-            folder,
-        },
-        pagination: {
-            take,
-            skip,
-            total,
-        },
-    });
+        res.status(200).json({
+            path,
+            data: {
+                folder,
+            },
+            pagination: {
+                take,
+                skip,
+                total,
+            },
+        });
+    } else {
+        throw new APIError(
+            'Permission Denied: You do not have the necessary permissions to access this resource',
+            403
+        );
+    }
 });
 
 const deleteFolder = asyncHandler(async (req, res, _) => {
@@ -245,19 +242,18 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
         );
     }
 
-    if (userId !== folderExist.ownerId) {
-        if (req.user.role !== 'admin')
-            throw new APIError(
-                'You do not have the required permissions to delete this resource',
-                403
-            );
+    if (userId === folderExist.ownerId || req.user.role === 'admin') {
+        await storage.destroyNestedFiles(folderExist.path);
+
+        await folderService.deleteFolder(folderExist, storage.destroyFolder);
+
+        res.sendStatus(204);
+    } else {
+        throw new APIError(
+            'You do not have the required permissions to delete this resource',
+            403
+        );
     }
-
-    await storage.destroyNestedFiles(folderExist.path);
-
-    await folderService.deleteFolder(folderExist, storage.destroyFolder);
-
-    res.sendStatus(204);
 });
 
 export default {

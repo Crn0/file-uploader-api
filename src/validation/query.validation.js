@@ -47,7 +47,7 @@ export default {
         const methodName = method.toLowerCase();
         const reqObject = {
             root: includes(true),
-            get: [ownerId(), includes(true)],
+            get: includes(true),
             post: includes(true),
             delete: includes(false),
         };
