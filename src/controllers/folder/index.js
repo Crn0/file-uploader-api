@@ -108,7 +108,7 @@ const generateLink = asyncHandler(async (req, res, _) => {
             }
         );
 
-        const url = `${process.env.SERVER_URL}/api/v1/share/folders/${token}`;
+        const url = `${process.env.SERVER_URL}/api/v1/share/${token}?type=folder`;
 
         res.status(200).json({
             url,
