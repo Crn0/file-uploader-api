@@ -129,7 +129,7 @@ const getResourcesTotalCount = async (ownerId, folderId) => {
     return Math.floor(folders + files);
 };
 
-const deleteFolder = async (folderObj, cb) => {
+const deleteFolder = async (folderObj) => {
     const parent = await client.folder.findUnique({
         where: {
             id: folderObj.id,
@@ -144,15 +144,13 @@ const deleteFolder = async (folderObj, cb) => {
         },
     });
 
-    if (typeof cb === 'function') {
-        await cb(folderObj.path);
-    }
-
-    parent.folders?.map?.(async (folder) => {
-        if (folder) {
-            await deleteFolder(folder, cb);
-        }
-    });
+    await Promise.all(
+        parent.folders?.map?.(async (folder) => {
+            if (folder) {
+                await deleteFolder(folder);
+            }
+        })
+    );
 
     return client.folder.delete({
         where: {

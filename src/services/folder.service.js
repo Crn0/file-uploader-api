@@ -69,11 +69,8 @@ const getResourcesTotalCount = async (ownerId, folderId) => {
     return total;
 };
 
-const deleteFolder = async (folderObj, cb) => {
-    if (typeof cb !== 'function')
-        throw new Error(`cb is ${typeof cb}; expected a function`);
-
-    const folder = await folderRepository.deleteFolder(folderObj, cb);
+const deleteFolder = async (folderObj) => {
+    const folder = await folderRepository.deleteFolder(folderObj);
 
     return folder;
 };

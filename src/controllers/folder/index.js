@@ -179,7 +179,7 @@ const getFolder = asyncHandler(async (req, res, _) => {
 
     const folder = await folderService.getFolder(folderId, options);
 
-    if (folder.id === userId || user.role !== 'admin') {
+    if (folder.id === userId || user.role === 'admin') {
         if (!folder)
             throw new APIError(
                 'The resource could not be found on the server',
@@ -245,7 +245,9 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
     if (userId === folderExist.ownerId || req.user.role === 'admin') {
         await storage.destroyNestedFiles(folderExist.path);
 
-        await folderService.deleteFolder(folderExist, storage.destroyFolder);
+        await storage.destroyFolder(folderExist.path);
+
+        await folderService.deleteFolder(folderExist);
 
         res.sendStatus(204);
     } else {
