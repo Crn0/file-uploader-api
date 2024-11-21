@@ -1,6 +1,24 @@
 import cloudinary from '../configs/cloudinary/index.js';
 import CloudinrayError from '../errors/cloudinary.error.js';
 
+const fileURL = (fileObj, transformations) =>
+    cloudinary.url(fileObj.publicId, {
+        ...transformations,
+    });
+
+const fileDownload = (fileObj) =>
+    cloudinary.url(fileObj.publicId, {
+        flags: `attachment:${fileObj.name}`,
+        resource_type: fileObj.resourceType,
+    });
+
+const timeDownload = (fileObj) =>
+    cloudinary.utils.private_download_url(fileObj.publicId, fileObj.extension, {
+        expires_at: fileObj.expiresAt,
+        type: fileObj.deliveryType,
+        attachment: true,
+    });
+
 const createFolder = async (folderPath) => {
     try {
         const res = await cloudinary.api.create_folder(folderPath);
@@ -27,6 +45,7 @@ const createFile = async (folder, file, type, eagerOptions) => {
             folder,
             resource_type: type,
             eager: eagerOptions,
+            use_filename: true,
         });
 
         return res;
@@ -160,6 +179,9 @@ export default {
     createFolder,
     createFile,
     getSubFolders,
+    fileURL,
+    fileDownload,
+    timeDownload,
     destroyFolder,
     destroyNestedFiles,
     destroyFile,
