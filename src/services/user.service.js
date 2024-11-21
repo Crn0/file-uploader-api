@@ -53,15 +53,8 @@ const updatePassword = async (id, password, options) => {
     return patchedPassword;
 };
 
-const deleteUser = async (id, storage) => {
-    const userResources = await userRepository.getUserRecources(id);
-
+const deleteUser = async (id) => {
     const deletedUser = await userRepository.deleteUser(id);
-
-    userResources.folders.map(async (folder) =>
-        storage.deleteFolder(folder.path)
-    );
-    userResources.files.map(async (file) => storage.deleteFile(file.publicId));
 
     return deletedUser;
 };
