@@ -33,6 +33,7 @@ app.use(express.static(join(__dirname, '..', 'public')));
 // ROUTES
 app.use('/api/v1/auth', apiRoutes.auth);
 app.use('/api/v1/folders', apiRoutes.folder);
+app.use('/api/v1/files', apiRoutes.file);
 
 // error handler
 app.use((err, req, res, _) => {
