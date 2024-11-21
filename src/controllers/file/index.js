@@ -301,7 +301,7 @@ const previewFile = asyncHandler(async (req, res, _) => {
 
         const imageURL = storage.fileURL(file, {
             // covernt the transformation query string to object
-            ...transformations.split(',').reduce((obj, _) => {
+            ...transformations?.split(',')?.reduce((obj, _) => {
                 const str = _.split('=');
                 const key = str[0];
                 const value = str[1];
