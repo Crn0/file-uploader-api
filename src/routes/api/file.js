@@ -19,9 +19,9 @@ router.get(
 
 router.get(
     '/:fileId/content',
-    // middlewares.protectedRoute,
-    // paramValidation.entityId('fileId'),
-    // queryValidation.file('get'),
+    middlewares.protectedRoute,
+    paramValidation.entityId('fileId'),
+    queryValidation.file('get'),
     controllers.getFileContent
 );
 
