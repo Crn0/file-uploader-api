@@ -134,6 +134,9 @@ const blackListToken = async (userId, jwtId, expiresIn) => {
 
 const deleteExpiredTokens = async () => authRepository.deleteExpiredTokens();
 
+const deleteTokensByUserId = async (userId) =>
+    authRepository.deleteTokensByUserId(userId);
+
 export default {
     clean,
     checkValidToken,
@@ -142,4 +145,5 @@ export default {
     login,
     blackListToken,
     deleteExpiredTokens,
+    deleteTokensByUserId,
 };

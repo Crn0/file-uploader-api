@@ -67,10 +67,18 @@ const deleteExpiredTokens = async () =>
         },
     });
 
+const deleteTokensByUserId = async (userId) =>
+    client.blackListToken.deleteMany({
+        where: {
+            userId,
+        },
+    });
+
 export default {
     createLocal,
     createOpenId,
     blackListToken,
     getToken,
     deleteExpiredTokens,
+    deleteTokensByUserId,
 };
