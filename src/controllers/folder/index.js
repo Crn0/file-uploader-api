@@ -36,7 +36,7 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const parentFolder = await folderService.getFolder(folderId);
@@ -83,7 +83,7 @@ const generateLink = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const { user } = req;
@@ -138,7 +138,7 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const options = optionIncludes(req.query, folderValidKeys);
@@ -207,7 +207,7 @@ const getFolder = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const options = optionIncludes(req.query, folderValidKeys);
@@ -283,7 +283,7 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const folderExist = await folderService.getFolder(folderId);

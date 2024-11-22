@@ -39,7 +39,7 @@ const createFile = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     let fileUpload;
@@ -133,7 +133,7 @@ const generateLink = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const { user } = req;
@@ -185,7 +185,7 @@ const getFileMetaData = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const { user } = req;
@@ -223,7 +223,7 @@ const getFileContent = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const { user } = req;
@@ -293,7 +293,7 @@ const previewFile = asyncHandler(async (req, res, _) => {
     if (file.extension === 'epub')
         throw new APIError(
             'Files that have the .epub extension cannot be previewed',
-            422
+            400
         );
 
     if (file.ownerId === user.id || user.role === 'admin') {

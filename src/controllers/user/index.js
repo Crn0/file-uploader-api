@@ -32,7 +32,7 @@ const deleteAccount = asyncHandler(async (req, res, _) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     const { user } = req;

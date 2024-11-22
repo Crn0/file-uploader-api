@@ -17,7 +17,7 @@ const validationError = asyncHandler(async (req, res, next) => {
             };
         });
 
-        throw new FieldError('Validation Failed', errorFields, 400);
+        throw new FieldError('Validation Failed', errorFields, 422);
     }
 
     next();
