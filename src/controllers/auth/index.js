@@ -9,6 +9,7 @@ import folderService from '../../services/folder.service.js';
 import StorageFactory from '../../storages/index.js';
 import FieldError from '../../errors/field.error.js';
 import AuthError from '../../errors/auth.error.js';
+import APIError from '../../errors/api.error.js';
 
 const { NODE_ENV } = process.env;
 
@@ -117,14 +118,20 @@ const refresh = asyncHandler(async (req, res, next) => {
             401
         );
 
+    const user = await userService.meById(Number(decodedToken.sub));
+
+    if (!user)
+        throw APIError(
+            'User not found. The account associated with this refresh token has been deleted',
+            404
+        );
+
     // BLACKLIST THE INCOMING REFRESH TOKEN
     await authService.blackListToken(
         decodedToken.sub,
         decodedToken.jti,
         new Date(decodedToken.exp * 1000)
     );
-
-    const user = await userService.meById(Number(decodedToken.sub));
 
     req.user = user;
 
