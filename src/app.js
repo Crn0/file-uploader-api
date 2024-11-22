@@ -35,6 +35,7 @@ app.use('/api/v1/auth', apiRoutes.auth);
 app.use('/api/v1/folders', apiRoutes.folder);
 app.use('/api/v1/files', apiRoutes.file);
 app.use('/api/v1/users', apiRoutes.user);
+app.use('/api/v1/share', apiRoutes.share);
 
 // error handler
 app.use((err, req, res, _) => {
