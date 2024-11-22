@@ -14,15 +14,17 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String?  @unique @db.VarChar(255)
-  email     String?  @unique @db.VarChar(255)
-  password  String?  @db.VarChar(60)
-  openIds   OpenId[]
+  id        Int              @id @default(autoincrement())
+  username  String           @unique @db.VarChar(255)
+  email     String?          @unique @db.VarChar(255)
+  password  String?          @db.VarChar(60)
+  role      Role             @default(user)
   folders   Folder[]
-  role      Role     @default(user)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+  files     File[]
+  openIds   OpenId[]
+  tokens    BlackListToken[]
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime         @default(now()) @map("updated_at") @db.Timestamptz(3)
 
   @@map("users")
 }
@@ -31,7 +33,7 @@ model OpenId {
   id        Int      @id @default(autoincrement())
   provider  Provider
   tokenId   String   @map("token_id") @db.VarChar(255)
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int      @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -40,18 +42,29 @@ model OpenId {
   @@map("open_ids")
 }
 
+model BlackListToken {
+  id        Int      @id @default(autoincrement())
+  jwtId     String   @unique() @map("jwt_id") @db.VarChar(36)
+  userId    Int      @map("user_id")
+  expiresIn DateTime @map("expires_in")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("blacklist_tokens")
+}
+
 model Folder {
-  id                 Int          @id @default(autoincrement())
-  name               String       @db.VarChar(255)
-  path               String       @db.VarChar(255)
-  owner              User         @relation(fields: [ownerId], references: [id])
-  ownerId            Int          @map("owner_id")
-  type               ResourceType @default(folder)
-  folders            Folder[]     @relation("folders")
-  systemetricFolders Folder[]     @relation("folders")
-  files              File[]
-  createdAt          DateTime     @default(now()) @map("created_at")
-  updatedAt          DateTime     @default(now()) @map("updated_at")
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  path         String     @db.VarChar(255)
+  ownerId      Int        @map("owner_id")
+  parentId     Int?       @map("parent_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+  type         EntityType @default(folder)
+  owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  parentFolder Folder?    @relation("FolderSubfolders", fields: [parentId], references: [id])
+  folders      Folder[]   @relation("FolderSubfolders")
+  files        File[]
 
   @@map("folders")
 }
@@ -59,15 +72,19 @@ model Folder {
 model File {
   id           Int          @id @default(autoincrement())
   name         String       @db.VarChar(255)
-  url          String       @db.VarChar(255)
   publicId     String       @map("public_id") @db.VarChar(255)
-  resourceType ResourceType @default(unknown) @map("resource_type")
-  deliveryType DeliveryType @default(upload) @map("delivery_type")
-  size         BigInt       @db.BigInt
-  Folder       Folder       @relation(fields: [folderId], references: [id])
+  size         Int          @db.Integer
+  version      Int          @db.Integer
+  ownerId      Int          @map("owner_id")
   folderId     Int          @map("folder_id")
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @default(now()) @map("updated_at")
+  type         EntityType   @default(file)
+  extension    Extension
+  deliveryType DeliveryType @default(upload) @map("delivery_type")
+  resourceType ResourceType @map("resource_type")
+  owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  folder       Folder       @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
   @@map("files")
 }
@@ -82,6 +99,20 @@ enum Role {
   admin
 }
 
+enum EntityType {
+  folder
+  file
+}
+
+enum Extension {
+  unknown
+  png
+  jpeg
+  jpg
+  webp
+  epub
+}
+
 enum DeliveryType {
   upload
   private
@@ -89,11 +120,6 @@ enum DeliveryType {
 }
 
 enum ResourceType {
-  unknown
-  folder
-  png
-  jpeg
-  jpg
-  webp
-  epub
+  image
+  raw
 }

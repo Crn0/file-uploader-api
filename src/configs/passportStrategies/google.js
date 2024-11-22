@@ -1,34 +1,56 @@
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import queries from '../../db/queries/index.js';
+import authService from '../../services/auth.service.js';
+import userService from '../../services/user.service.js';
+import folderService from '../../services/folder.service.js';
+import StorageFactory from '../../storages/index.js';
 
 const options = {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    scope: ['email', 'profile'],
-    state: true,
+    scope: ['profile'],
+    state: false,
 };
 
 const verifyCb = async (accessToken, refreshToken, profile, done) => {
     try {
-        const { provider, tokenId, givenName } = profile;
+        const { provider } = profile;
+        // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
+        const { sub: tokenId, given_name: givenName } = profile._json;
 
-        const userExist = await queries.get.userByOpenId(tokenId);
+        const openIdExist = await userService.meByOpenId(provider, tokenId, {
+            user: true,
+        });
 
-        if (!userExist) {
+        if (!openIdExist) {
+            const storage = StorageFactory().createStorage('cloudinary');
             const username = `${givenName}-${uuidv4()}`;
-            const createUser = await queries.post.userOpenId(
-                provider,
-                tokenId,
-                username
+            const createdUser = await authService.signupOpenId(
+                {
+                    provider,
+                    tokenId,
+                    username,
+                },
+                { user: true }
             );
 
-            return done(null, createUser);
+            // create users' root folder on account creation
+            const rootFolder = await storage.createFolder(
+                `${process.env.CLOUDINARY_ROOT_FOLDER}/${username}-folder`
+            );
+
+            await folderService.createFolder(
+                createdUser.user.id,
+                rootFolder.name,
+                rootFolder.path
+            );
+
+            return done(null, createdUser.user);
         }
 
-        return done(null, userExist);
+        return done(null, openIdExist.user);
     } catch (error) {
         return done(error);
     }
