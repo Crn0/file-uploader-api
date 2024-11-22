@@ -1,5 +1,15 @@
 import client from '../db/client.js';
 
+const compare = (a, b) => {
+    if (a.id < b.id) {
+        return -1;
+    }
+    if (a.id > b.id) {
+        return 1;
+    }
+    return 0;
+};
+
 const createFolder = async (ownerId, name, path, options) => {
     const folder = await client.folder.create({
         data: {
@@ -58,12 +68,16 @@ const getRootFolder = async (id, options) => {
 };
 
 const getFolderPath = async (ownerId, folderId) => {
-    const folder = await client.folder.findMany({
+    const path = [];
+    const folders = await client.folder.findMany({
         where: {
             ownerId,
             id: {
                 lte: folderId,
             },
+        },
+        orderBy: {
+            id: 'asc',
         },
         select: {
             id: true,
@@ -71,8 +85,16 @@ const getFolderPath = async (ownerId, folderId) => {
             parentId: true,
         },
     });
+    const queue = [...folders].filter((f) => f.id !== folderId);
 
-    return folder;
+    path.push(folders[folders.length - 1]);
+
+    while (queue.length) {
+        const curr = queue.pop();
+        if (path[path.length - 1].parentId === curr.id) path.push(curr);
+    }
+
+    return path.sort(compare);
 };
 
 const getFolder = async (folderId, options) => {
