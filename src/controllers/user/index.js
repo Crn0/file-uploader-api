@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import userService from '../../services/user.service.js';
 import folderService from '../../services/folder.service.js';
-import authService from '../../services/auth.service.js';
 import storageFactory from '../../storages/index.js';
 import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
