@@ -42,6 +42,32 @@ const expiresIn = () =>
             'Invalid time format. Supported formats are: 10s for seconds, 10m for minutes, 10h for hours, 10d for days'
         );
 
+const entityType = () =>
+    query('type')
+        .trim()
+        .notEmpty()
+        .withMessage(`The 'type' query parameter cannot be empty`)
+        .isString()
+        .withMessage(`The 'type' query parameter must be a string value`)
+        .custom((val) => ['folder', 'file'].includes(val.trim()))
+        .withMessage(
+            "Invalid 'type' query parameter value. Valid values are: folder or file"
+        );
+
+const fileAction = () =>
+    query('action')
+        .trim()
+        .custom((val, { req }) => {
+            if (req.query.type.trim().toLowerCase() === 'folder') return true;
+
+            return ['metadata', 'preview', 'download'].includes(
+                val.trim().toLowerCase()
+            );
+        })
+        .withMessage(
+            "Invalid 'action' query parameter value. Valid values are: metadata, preview or download"
+        );
+
 export default {
     folder: (method) => {
         const methodName = method.toLowerCase();
@@ -67,6 +93,16 @@ export default {
                 includes(false),
             ].flat(Infinity),
             delete: includes(false),
+        };
+
+        if (reqObject[methodName]) return reqObject[methodName];
+
+        throw new Error(`invalid http method ${method}`);
+    },
+    share: (method) => {
+        const methodName = method.toLowerCase();
+        const reqObject = {
+            get: [includes(true), entityType(), fileAction()],
         };
 
         if (reqObject[methodName]) return reqObject[methodName];

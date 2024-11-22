@@ -9,6 +9,13 @@ const entityId = (idParam) =>
         .withMessage(`The ${idParam} parameter must be a numeric value`)
         .escape();
 
+const token = () =>
+    param('token')
+        .trim()
+        .notEmpty()
+        .withMessage('The token parameter cannot be empty');
+
 export default {
     entityId,
+    token,
 };
