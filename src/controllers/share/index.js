@@ -15,67 +15,110 @@ const folderValidKeys = {
 };
 
 const getFolder = asyncHandler(async (req, res, next) => {
-    if (req.query.type === 'folder') {
-        const folderId = Number(req.shareToken.id);
+    if (req.query.type !== 'folder') return next();
 
-        const options = optionIncludes(req.query, folderValidKeys);
-        const { take, skip } = pagination(req.query);
+    // if the request includes a folderId pass it to the next middleware
+    if (req.query.fileId) return next();
 
-        if (options.folders) {
-            if (typeof options.folders !== 'object') {
-                options.folders = {};
-            }
+    // if the shared folder ID and the sub folder ID is the same
+    // throw an error
+    if (req.shareToken.id === Number(req.query.folderId))
+        throw new APIError(
+            'The resource could not be found on the server',
+            404
+        );
 
-            options.folders.take = take;
-            options.folders.skip = skip;
+    let folder;
+    const options = optionIncludes(req.query, folderValidKeys);
+    const { take, skip } = pagination(req.query);
+
+    if (options.folders) {
+        if (typeof options.folders !== 'object') {
+            options.folders = {};
         }
 
-        if (options.files) {
-            if (typeof options.files !== 'object') {
-                options.files = {};
-            }
-            options.files.skip = skip;
-            options.files.take = take;
+        options.folders.take = take;
+        options.folders.skip = skip;
+    }
+
+    if (options.files) {
+        if (typeof options.files !== 'object') {
+            options.files = {};
         }
+        options.files.skip = skip;
+        options.files.take = take;
+    }
 
-        const folder = await folderService.getFolder(folderId, options);
+    // if there is a child id query the child folder
+    // else query the parent folder
+    if (req.query.folderId) {
+        folder = await folderService.getFolder(
+            Number(req.query.folderId),
+            options
+        );
+    } else {
+        folder = await folderService.getFolder(
+            Number(req.shareToken.id),
+            options
+        );
+    }
 
-        if (!folder)
+    const path = await folderService.getFolderPath(folder.ownerId, folder.id);
+    const total = await folderService.getResourcesTotalCount(
+        folder.ownerId,
+        folder.id
+    );
+
+    const isValidPath = path.map(
+        (pathObj) => req.shareToken.id === pathObj.parentId
+    );
+
+    if (!folder)
+        throw new APIError(
+            'The resource could not be found on the server',
+            404
+        );
+
+    if (!isValidPath.some((p) => p === true))
+        throw new APIError(
+            'The resource could not be found on the server',
+            404
+        );
+
+    return res.status(200).json({
+        path,
+        data: {
+            folder,
+        },
+        pagination: {
+            take,
+            skip,
+            total,
+        },
+    });
+});
+
+const getFileMetaData = asyncHandler(async (req, res, next) => {
+    if (req.query.action === 'metadata') {
+        const fileId = Number(req.query.fileId) || Number(req.shareToken.id);
+
+        const file = await fileService.getFile(fileId);
+        const path = await folderService.getFolderPath(
+            file.ownerId,
+            file.folderId
+        );
+
+        const isValidPath = path.map(
+            (pathObj) => req.shareToken.id === pathObj.parentId
+        );
+
+        if (!file)
             throw new APIError(
                 'The resource could not be found on the server',
                 404
             );
 
-        const path = await folderService.getFolderPath(folder.id, folderId);
-
-        const total = await folderService.getResourcesTotalCount(
-            folder.id,
-            folderId
-        );
-
-        res.status(200).json({
-            path,
-            data: {
-                folder,
-            },
-            pagination: {
-                take,
-                skip,
-                total,
-            },
-        });
-    } else {
-        next();
-    }
-});
-
-const getFileMetaData = asyncHandler(async (req, res, next) => {
-    if (req.query.action === 'metadata') {
-        const fileId = Number(req.shareToken.id);
-
-        const file = await fileService.getFile(fileId);
-
-        if (!file)
+        if (!isValidPath.some((p) => p === true))
             throw new APIError(
                 'The resource could not be found on the server',
                 404
@@ -89,11 +132,25 @@ const getFileMetaData = asyncHandler(async (req, res, next) => {
 
 const getFileContent = asyncHandler(async (req, res, next) => {
     if (req.query.action === 'download') {
-        const fileId = Number(req.shareToken.id);
+        const fileId = Number(req.query.fileId) || Number(req.shareToken.id);
 
         const file = await fileService.getFile(fileId);
+        const path = await folderService.getFolderPath(
+            file.ownerId,
+            file.folderId
+        );
+
+        const isValidPath = path.map(
+            (pathObj) => req.shareToken.id === pathObj.parentId
+        );
 
         if (!file)
+            throw new APIError(
+                'The resource could not be found on the server',
+                404
+            );
+
+        if (!isValidPath.some((p) => p === true))
             throw new APIError(
                 'The resource could not be found on the server',
                 404
@@ -112,11 +169,25 @@ const getFileContent = asyncHandler(async (req, res, next) => {
 const previewFile = asyncHandler(async (req, res, next) => {
     if (req.query.action === 'preview') {
         const { transformations } = req.query;
-        const fileId = Number(req.shareToken.id);
+        const fileId = Number(req.query.fileId) || Number(req.shareToken.id);
 
         const file = await fileService.getFile(fileId);
+        const path = await folderService.getFolderPath(
+            file.ownerId,
+            file.folderId
+        );
+
+        const isValidPath = path.map(
+            (pathObj) => req.shareToken.id === pathObj.parentId
+        );
 
         if (!file)
+            throw new APIError(
+                'The resource could not be found on the server',
+                404
+            );
+
+        if (!isValidPath.some((p) => p === true))
             throw new APIError(
                 'The resource could not be found on the server',
                 404
@@ -136,7 +207,6 @@ const previewFile = asyncHandler(async (req, res, next) => {
                 const str = _?.split('=');
                 const key = str[0];
                 const value = str[1];
-
                 return {
                     ...obj,
                     [key]: value,
