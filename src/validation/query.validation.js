@@ -58,7 +58,11 @@ const fileAction = () =>
     query('action')
         .trim()
         .custom((val, { req }) => {
-            if (req.query.type.trim().toLowerCase() === 'folder') return true;
+            if (
+                req.query.type.trim().toLowerCase() === 'folder' &&
+                !req.query.fileId
+            )
+                return true;
 
             return ['metadata', 'preview', 'download'].includes(
                 val.trim().toLowerCase()
@@ -67,6 +71,16 @@ const fileAction = () =>
         .withMessage(
             "Invalid 'action' query parameter value. Valid values are: metadata, preview or download"
         );
+
+const subEntity = (id) =>
+    query(id)
+        .trim()
+        .custom((val) => {
+            if (!val) return true;
+
+            return Number.isNaN(Number(val)) === false;
+        })
+        .withMessage(`The '${id}' query parameter must be a numeric value`);
 
 export default {
     folder: (method) => {
@@ -102,7 +116,13 @@ export default {
     share: (method) => {
         const methodName = method.toLowerCase();
         const reqObject = {
-            get: [includes(true), entityType(), fileAction()],
+            get: [
+                includes(true),
+                entityType(),
+                fileAction(),
+                subEntity('folderId'),
+                subEntity('fileId'),
+            ],
         };
 
         if (reqObject[methodName]) return reqObject[methodName];
