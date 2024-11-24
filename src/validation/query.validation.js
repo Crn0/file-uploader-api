@@ -8,15 +8,6 @@ const includes = (isSupported) =>
               .withMessage('Embed request is not supported')
               .escape();
 
-const ownerId = () =>
-    query('ownerId')
-        .trim()
-        .notEmpty()
-        .withMessage("The 'ownerId' query parameter cannot be empty")
-        .isNumeric()
-        .withMessage("The 'ownerId' query parameter must be a numeric value")
-        .escape();
-
 const entityId = (id) =>
     query(id)
         .trim()
