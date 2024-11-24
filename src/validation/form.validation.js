@@ -59,13 +59,13 @@ const password = () =>
         .trim()
         .isStrongPassword({
             minLength: 8,
-            minUppercase: 0,
+            minUppercase: 1,
             minLowercase: 0,
-            minNumbers: 0,
+            minNumbers: 1,
             minSymbols: 0,
         })
         .withMessage(
-            'Password must contain at least one uppercase letter and be a minimum of 8 characters'
+            'Password must contain at least one uppercase letter, one number and be a minimum of 8 characters'
         );
 
 const confirmPassword = () =>
