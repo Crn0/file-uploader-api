@@ -15,7 +15,7 @@ const readAcessToken = (req, res, next) => {
                 console.log('expired access token');
 
                 next(
-                    new AuthError('Expired token. Please reauthenticate', 403)
+                    new AuthError('Expired token. Please reauthenticate', 401)
                 );
             } else {
                 req.user = decoded;

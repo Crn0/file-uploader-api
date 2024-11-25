@@ -20,7 +20,7 @@ const readRefreshToken = (req, res, next) => {
             if (err) {
                 console.log(err);
                 console.log('expired refresh token');
-                return res.sendStatus(403); // forbidden
+                return res.sendStatus(401);
             }
 
             return next();
