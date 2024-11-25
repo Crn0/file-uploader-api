@@ -161,15 +161,15 @@ const login = asyncHandler(async (req, res, _) => {
     const { cookies } = req;
     const oldToken = cookies.refresh_token;
 
+    res.clearCookie('refresh_token');
     if (oldToken) {
-        res.clearCookie('refresh_token');
-
         const decodeToken = jwt.decode(oldToken);
         const expiresIn = new Date(decodeToken.exp * 1000);
 
         const tokenExist = await authService.checkValidToken(decodeToken.jti);
+        const userExist = await userService.meById(Number(decodeToken.sub));
 
-        if (!tokenExist) {
+        if (userExist && !tokenExist) {
             await authService.blackListToken(
                 decodeToken.sub,
                 decodeToken.jti,
