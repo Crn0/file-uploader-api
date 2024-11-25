@@ -69,7 +69,7 @@ const password = () =>
         );
 
 const confirmPassword = () =>
-    body('confirm-password')
+    body('confirm_password')
         .custom((val, { req }) => val === req.body.password)
         .withMessage('Password does not match');
 
