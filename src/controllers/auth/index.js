@@ -139,7 +139,7 @@ const refresh = asyncHandler(async (req, res, next) => {
     const user = await userService.meById(Number(decodedToken.sub));
 
     if (!user)
-        throw APIError(
+        throw new APIError(
             'User not found. The account associated with this refresh token has been deleted',
             404
         );
