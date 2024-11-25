@@ -100,6 +100,24 @@ const googleCb = (req, res, next) =>
         return next();
     })(req, res, next);
 
+const redirectAuth = asyncHandler(async (req, res, _) => {
+    const { user } = req;
+
+    const cleanedUser = authService.clean(user, ['password']);
+
+    const { refreshToken } = authService.login(cleanedUser);
+
+    res.cookie('refresh_token', refreshToken, cookieOptions);
+
+    let redirectURL = process.env.FRONTEND_URL;
+
+    if (!redirectURL.endsWith('/')) {
+        redirectURL += '/';
+    }
+
+    res.redirect(redirectURL);
+});
+
 const refresh = asyncHandler(async (req, res, next) => {
     const { cookies } = req;
     const oldRefreshToken = cookies.refresh_token;
@@ -218,6 +236,7 @@ export default {
     googleCb,
     refresh,
     login,
+    redirectAuth,
     logout,
     authFailure,
 };

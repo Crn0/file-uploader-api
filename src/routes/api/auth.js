@@ -13,13 +13,14 @@ const {
     googleCb,
     refresh,
     login,
+    redirectAuth,
     logout,
 } = controllers;
 
 const { readRefreshToken } = middlewares;
 
 route.get('/google', authenticateGoogle);
-route.get('/google/callback', googleCb, login);
+route.get('/google/callback', googleCb, redirectAuth);
 
 route.post('/local', formValidation.signUp, createUserLocal, login);
 route.post('/tokens', formValidation.login, authenticateLocal, login);
