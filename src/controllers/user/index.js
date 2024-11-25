@@ -8,9 +8,9 @@ import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
 
 const me = async (req, res, _) => {
-    const { user } = req;
+    const user = await userService.meById(Number(req.user.id));
 
-    const cleanedUser = userService.clean(user, ['iat', 'exp', 'sub']);
+    const cleanedUser = userService.clean(user, ['password']);
 
     res.json({
         user: cleanedUser,
