@@ -7,17 +7,13 @@ const router = Router();
 
 router.use(middlewares.readAcessToken);
 
-router.get(
-    '/me',
-    middlewares.protectedRoute,
-    validation.paramValidation.entityId('userId'),
-    controllers.me
-);
+router.get('/me', middlewares.protectedRoute, controllers.me);
 
 router.delete(
     '/:userId',
     middlewares.protectedRoute,
     validation.paramValidation.entityId('userId'),
+    middlewares.validationError,
     controllers.deleteAccount
 );
 
