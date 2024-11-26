@@ -22,10 +22,10 @@ const { readRefreshToken } = middlewares;
 route.get('/google', authenticateGoogle);
 route.get('/google/callback', googleCb, redirectAuth);
 
-route.post('/local', formValidation.signUp, createUserLocal, login);
-route.post('/tokens', formValidation.login, authenticateLocal, login);
-route.post('/tokens/refresh-token', readRefreshToken, refresh, login);
+route.post('/register', formValidation.signUp, createUserLocal, login);
+route.post('/login', formValidation.login, authenticateLocal, login);
+route.post('/refresh-token', readRefreshToken, refresh, login);
 
-route.delete('/tokens', logout);
+route.post('/logout', logout);
 
 export default route;
