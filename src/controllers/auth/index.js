@@ -188,7 +188,6 @@ const login = asyncHandler(async (req, res, _) => {
 
     res.json({
         accessToken,
-        user: cleanedUser,
     });
 });
 
