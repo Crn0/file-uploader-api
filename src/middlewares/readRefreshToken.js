@@ -18,9 +18,13 @@ const readRefreshToken = (req, res, next) => {
         process.env.REFRESH_TOKEN_SECRET,
         (err, _) => {
             if (err) {
-                console.log(err);
-                console.log('expired refresh token');
-                return res.sendStatus(401);
+                res.clearCookie('refresh_token');
+                return next(
+                    new AuthError(
+                        'Your session has timed out. Please log in again to proceed',
+                        401
+                    )
+                );
             }
 
             return next();
