@@ -7,15 +7,19 @@ import storageFactory from '../../storages/index.js';
 import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
 
-const me = async (req, res, _) => {
+const me = asyncHandler(async (req, res, _) => {
     const user = await userService.meById(Number(req.user.id));
 
     const cleanedUser = userService.clean(user, ['password']);
 
+    // Convert BigInt to Int as the JSON.stringify cannot
+    // serialized BigInt
+    cleanedUser.fileSize = Number(cleanedUser.fileSize);
+
     res.json({
         user: cleanedUser,
     });
-};
+});
 
 const deleteAccount = asyncHandler(async (req, res, _) => {
     const errors = validationResult(req);
