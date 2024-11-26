@@ -20,14 +20,12 @@ const verifyCb = async (accessToken, refreshToken, profile, done) => {
         // eslint-disable-next-line no-unsafe-optional-chaining, no-underscore-dangle
         const { sub: tokenId, given_name: givenName } = profile._json;
 
-        const openIdExist = await userService.meByOpenId(provider, tokenId, {
-            user: true,
-        });
+        let user = await userService.meByOpenId(provider, tokenId);
 
-        if (!openIdExist) {
+        if (!user) {
             const storage = StorageFactory().createStorage('cloudinary');
             const username = `${givenName}-${uuidv4()}`;
-            const createdUser = await authService.signupOpenId(
+            await authService.signupOpenId(
                 {
                     provider,
                     tokenId,
@@ -38,19 +36,21 @@ const verifyCb = async (accessToken, refreshToken, profile, done) => {
 
             // create users' root folder on account creation
             const rootFolder = await storage.createFolder(
-                `${process.env.CLOUDINARY_ROOT_FOLDER}/${username}-folder`
+                `${process.env.CLOUDINARY_ROOT_FOLDER}/${username}`
             );
 
+            user = await userService.meByOpenId(provider, tokenId);
+
             await folderService.createFolder(
-                createdUser.user.id,
+                user.id,
                 rootFolder.name,
                 rootFolder.path
             );
 
-            return done(null, createdUser.user);
+            return done(null, user);
         }
 
-        return done(null, openIdExist.user);
+        return done(null, user);
     } catch (error) {
         return done(error);
     }
