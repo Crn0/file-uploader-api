@@ -41,7 +41,7 @@ const createUserLocal = asyncHandler(async (req, res, next) => {
 
     // create users' root folder on account creation
     const rootFolder = await storage.createFolder(
-        `${process.env.CLOUDINARY_ROOT_FOLDER}/${user.username}-folder`
+        `${process.env.CLOUDINARY_ROOT_FOLDER}/${user.username}`
     );
 
     await folderService.createFolder(user.id, rootFolder.name, rootFolder.path);
