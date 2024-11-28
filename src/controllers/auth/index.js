@@ -182,6 +182,8 @@ const login = asyncHandler(async (req, res, _) => {
 
     const cleanedUser = authService.clean(user, ['password']);
 
+    cleanedUser.fileSize = Number(cleanedUser.fileSize);
+
     const { accessToken, refreshToken } = authService.login(cleanedUser);
 
     res.cookie('refresh_token', refreshToken, cookieOptions);
