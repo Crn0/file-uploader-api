@@ -40,9 +40,7 @@ const generateTokenCurry = (type) => (user, JWTSecret, expiresIn) => {
     if (type === 'access') {
         return jwt.sign(
             {
-                id: user.id,
-                username: user.username,
-                role: user.role,
+                ...user,
             },
             JWTSecret,
             {

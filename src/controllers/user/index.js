@@ -8,16 +8,10 @@ import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
 
 const me = asyncHandler(async (req, res, _) => {
-    const user = await userService.meById(Number(req.user.id));
-
-    const cleanedUser = userService.clean(user, ['password']);
-
-    // Convert BigInt to Int as the JSON.stringify cannot
-    // serialized BigInt
-    cleanedUser.fileSize = Number(cleanedUser.fileSize);
+    const { user } = req;
 
     res.json({
-        user: cleanedUser,
+        user,
     });
 });
 
