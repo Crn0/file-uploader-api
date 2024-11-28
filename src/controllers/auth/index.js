@@ -214,7 +214,7 @@ const logout = asyncHandler(async (req, res, _) => {
         );
 
         console.log(
-            `refreshToken with id ${blackListToken.jtwId} is blacklisted`
+            `refreshToken with id ${blackListToken.jwtId} is blacklisted`
         );
 
         res.clearCookie('refresh_token');
