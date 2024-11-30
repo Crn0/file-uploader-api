@@ -25,7 +25,6 @@ const fileExtensions = (mimeType) => {
 };
 
 const createFile = asyncHandler(async (req, res, _) => {
-    let fileUpload;
     const folderId = Number(req.query?.folderId);
     const ownerId = req.user.id;
 
@@ -50,24 +49,16 @@ const createFile = asyncHandler(async (req, res, _) => {
         );
     }
 
-    if (req.file.mimetype === 'application/epub+zip') {
-        fileUpload = await storage.createFile(
-            parentFolder.path,
-            req.file.path,
-            'raw'
-        );
-    } else {
-        fileUpload = await storage.createFile(
-            parentFolder.path,
-            req.file.path,
-            'image',
-            {
-                height: 500,
-                width: 800,
-                crop: 'auto_pad',
-            }
-        );
-    }
+    const fileUpload = await storage.createFile(
+        parentFolder.path,
+        req.file.path,
+        req.file.mimetype,
+        {
+            height: 500,
+            width: 800,
+            crop: 'auto_pad',
+        }
+    );
 
     const { originalname } = req.file;
 

@@ -40,13 +40,22 @@ const createFolder = async (folderPath) => {
 };
 
 const createFile = async (folder, file, type, eagerOptions) => {
+    let res;
     try {
-        const res = await cloudinary.uploader.upload(file, {
-            folder,
-            resource_type: type,
-            eager: eagerOptions,
-            use_filename: true,
-        });
+        if (type === 'application/epub+zip') {
+            res = await cloudinary.uploader.upload(file, {
+                folder,
+                resource_type: 'raw',
+                use_filename: true,
+            });
+        } else {
+            res = await cloudinary.uploader.upload(file, {
+                folder,
+                resource_type: 'image',
+                eager: eagerOptions,
+                use_filename: true,
+            });
+        }
 
         return res;
     } catch (e) {
