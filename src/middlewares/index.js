@@ -4,6 +4,7 @@ import protectedRoute from './protectedRoute.js';
 import multerUpload from './multerUpload.js';
 import readShareToken from './readShareToken.js';
 import validationError from './validationError.js';
+import queryOptions from './queryOptions.js';
 
 export default {
     readRefreshToken,
@@ -12,4 +13,5 @@ export default {
     protectedRoute,
     multerUpload,
     validationError,
+    queryOptions,
 };

@@ -123,6 +123,8 @@ const generateLink = asyncHandler(async (req, res, _) => {
 
 const getRootFolder = asyncHandler(async (req, res, _) => {
     const { user } = req;
+    const { includes, take, skip } = req;
+
     const userId = Number(user.id);
 
     const errors = validationResult(req);
@@ -141,27 +143,7 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
         throw new FieldError('Validation Failed', errorFields, 422);
     }
 
-    const options = optionIncludes(req.query, folderValidKeys);
-    const { take, skip } = pagination(req.query);
-
-    if (options.folders) {
-        if (typeof options.folders !== 'object') {
-            options.folders = {};
-        }
-
-        options.folders.take = take;
-        options.folders.skip = skip;
-    }
-
-    if (options.files) {
-        if (typeof options.files !== 'object') {
-            options.files = {};
-        }
-        options.files.skip = skip;
-        options.files.take = take;
-    }
-
-    const folder = await folderService.getRootFolder(userId, options);
+    const folder = await folderService.getRootFolder(userId, includes);
 
     if (!folder)
         throw new APIError(
@@ -191,6 +173,7 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
 
 const getFolder = asyncHandler(async (req, res, _) => {
     const { user } = req;
+    const { includes, take, skip } = req;
     const folderId = Number(req.params.folderId);
     const userId = Number(user.id);
 
@@ -210,27 +193,7 @@ const getFolder = asyncHandler(async (req, res, _) => {
         throw new FieldError('Validation Failed', errorFields, 422);
     }
 
-    const options = optionIncludes(req.query, folderValidKeys);
-    const { take, skip } = pagination(req.query);
-
-    if (options.folders) {
-        if (typeof options.folders !== 'object') {
-            options.folders = {};
-        }
-
-        options.folders.take = take;
-        options.folders.skip = skip;
-    }
-
-    if (options.files) {
-        if (typeof options.files !== 'object') {
-            options.files = {};
-        }
-        options.files.skip = skip;
-        options.files.take = take;
-    }
-
-    const folder = await folderService.getFolder(folderId, options);
+    const folder = await folderService.getFolder(folderId, includes);
 
     if (folder.id === userId || user.role === 'admin') {
         if (!folder)

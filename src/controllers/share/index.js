@@ -29,37 +29,19 @@ const getFolder = asyncHandler(async (req, res, next) => {
         );
 
     let folder;
-    const options = optionIncludes(req.query, folderValidKeys);
-    const { take, skip } = pagination(req.query);
-
-    if (options.folders) {
-        if (typeof options.folders !== 'object') {
-            options.folders = {};
-        }
-
-        options.folders.take = take;
-        options.folders.skip = skip;
-    }
-
-    if (options.files) {
-        if (typeof options.files !== 'object') {
-            options.files = {};
-        }
-        options.files.skip = skip;
-        options.files.take = take;
-    }
+    const { includes, take, skip } = req;
 
     // if there is a child id query the child folder
     // else query the parent folder
     if (req.query.folderId) {
         folder = await folderService.getFolder(
             Number(req.query.folderId),
-            options
+            includes
         );
     } else {
         folder = await folderService.getFolder(
             Number(req.shareToken.id),
-            options
+            includes
         );
     }
 

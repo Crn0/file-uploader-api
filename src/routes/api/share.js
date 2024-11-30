@@ -13,6 +13,7 @@ router.get(
     queryValidation.share('get'),
     middlewares.validationError,
     middlewares.readShareToken,
+    middlewares.queryOptions,
     controllers.getFolder,
     controllers.getFileMetaData,
     controllers.previewFile,

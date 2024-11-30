@@ -21,6 +21,7 @@ router.get(
     middlewares.protectedRoute,
     paramValidation.entityId('folderId'),
     queryValidation.folder('get'),
+    middlewares.queryOptions,
     controllers.getFolder
 );
 
