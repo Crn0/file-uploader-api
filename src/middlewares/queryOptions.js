@@ -9,31 +9,43 @@ const folderValidKeys = {
     files: queryValidKeys.files,
 };
 
-const sortBy = (string, allowList) => {
+const sortBy = (query, options, validKeys) => {
     const sortKey =
-        string
+        query.sortBy
             ?.split(/[x^+-]/)
             ?.join('')
             ?.trim() || 'name';
-    const sortOrder = string?.includes('-') ? 'desc' : 'asc';
 
-    const isAllowed = allowList.includes(sortKey);
+    const sortOrder = query.sortBy?.includes('-') ? 'desc' : 'asc';
 
-    if (isAllowed) {
-        return {
+    const optionRef = options;
+    const folderFields = validKeys.folders;
+    const fileFields = validKeys.files;
+
+    if (folderFields[sortKey]) {
+        optionRef.folders = {
+            ...optionRef.folders,
             orderBy: {
                 [sortKey]: sortOrder,
             },
         };
     }
 
-    return null;
+    if (fileFields[sortKey]) {
+        optionRef.files = {
+            ...optionRef.files,
+            orderBy: {
+                [sortKey]: sortOrder,
+            },
+        };
+    }
+
+    return optionRef;
 };
 
-const queryOptions = asyncHandler(async (req, res, next) => {
-    const options = optionIncludes(req.query, folderValidKeys);
-    const sortOption = sortBy(req.query.sortBy, ['name']);
-    const { take, skip } = pagination(req.query);
+const optionWrapper = (queryObj, validKeys) => {
+    const options = optionIncludes(queryObj, validKeys);
+    const { take, skip } = pagination(queryObj);
 
     if (options.folders) {
         if (typeof options.folders !== 'object') {
@@ -52,10 +64,17 @@ const queryOptions = asyncHandler(async (req, res, next) => {
         options.files.take = take;
     }
 
-    if (sortOption) {
-        options.folders = { ...options.folders, ...sortOption };
-        options.files = { ...options.files, ...sortOption };
-    }
+    sortBy(queryObj, options, validKeys);
+
+    return {
+        options,
+        take,
+        skip,
+    };
+};
+
+const queryOptions = asyncHandler(async (req, res, next) => {
+    const { options, take, skip } = optionWrapper(req.query, folderValidKeys);
 
     req.includes = options;
 
