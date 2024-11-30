@@ -46,9 +46,9 @@ const verifyCb = async (accessToken, refreshToken, profile, done) => {
                 rootFolder.name,
                 rootFolder.path
             );
-
-            return done(null, user);
         }
+
+        user.fileSize = Number(user.fileSize);
 
         return done(null, user);
     } catch (error) {
