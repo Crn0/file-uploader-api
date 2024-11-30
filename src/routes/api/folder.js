@@ -40,6 +40,7 @@ router.post(
     paramValidation.entityId('folderId'),
     queryValidation.folder('post'),
     formValidation.resourceEntity,
+    middlewares.queryOptions,
     controllers.createSubFolder
 );
 

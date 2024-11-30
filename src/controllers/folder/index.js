@@ -4,17 +4,8 @@ import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import folderService from '../../services/folder.service.js';
 import storageFactory from '../../storages/index.js';
-import helpers from '../../helpers/controllers/index.js';
-import queryValidKeys from '../../configs/queryValidKeys/index.js';
 import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
-
-const { optionIncludes, pagination } = helpers;
-
-const folderValidKeys = {
-    folders: queryValidKeys.folders,
-    files: queryValidKeys.files,
-};
 
 const createSubFolder = asyncHandler(async (req, res, _) => {
     const { name } = req.body;
@@ -38,6 +29,7 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
 
         throw new FieldError('Validation Failed', errorFields, 422);
     }
+    const { includes } = req;
 
     const parentFolder = await folderService.getFolder(folderId);
 
@@ -47,7 +39,6 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
             404
         );
 
-    const options = optionIncludes(req.query, folderValidKeys);
     const nameCount = await folderService.getFolderNameCountByUserId(
         userId,
         name
@@ -59,7 +50,7 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
         parentFolder.id,
         name,
         path,
-        options
+        includes
     );
 
     await storage.createFolder(path);
