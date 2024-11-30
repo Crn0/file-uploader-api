@@ -44,6 +44,12 @@ const getFileByFolderId = async (folderId, fileId, options) => {
     return file;
 };
 
+const getFileNameCount = async (userId, folderId) => {
+    const count = await fileRepositroy.getFileNameCount(userId, folderId);
+
+    return count;
+};
+
 const deleteFile = async (id, cb) => {
     const file = await fileRepositroy.deleteFile(id);
 
@@ -56,5 +62,6 @@ export default {
     createFile,
     getFile,
     getFileByFolderId,
+    getFileNameCount,
     deleteFile,
 };

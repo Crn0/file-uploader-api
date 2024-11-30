@@ -63,8 +63,10 @@ const createFile = asyncHandler(async (req, res, _) => {
     const { originalname } = req.file;
 
     const fileName =
-        originalname.substring(0, originalname.lastIndexOf('.')) ||
+        `${originalname.substring(0, originalname.lastIndexOf('.'))}` ||
         originalname;
+
+    const nameCount = await fileService.getFileNameCount(ownerId, fileName);
 
     const {
         version,
@@ -75,11 +77,14 @@ const createFile = asyncHandler(async (req, res, _) => {
     } = fileUpload;
 
     const fileExtension = fileExtensions(req.file.mimetype);
-
     const file = await fileService.createFile(
         parentFolder.ownerId,
         parentFolder.id,
-        fileName,
+        (() => {
+            if (!nameCount) return `${fileName}`;
+
+            return `${fileName}-${nameCount}`;
+        })(),
         publicId,
         size,
         version,

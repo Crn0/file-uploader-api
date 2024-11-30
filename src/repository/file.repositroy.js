@@ -67,11 +67,25 @@ const getFileByFolderId = async (folderId, fileId, options) => {
     return file;
 };
 
+const getFileNameCount = async (ownerId, name) => {
+    const count = await client.file.count({
+        where: {
+            ownerId,
+            name: {
+                contains: name,
+            },
+        },
+    });
+
+    return count;
+};
+
 const deleteFile = async (id) => client.file.delete({ where: { id } });
 
 export default {
     createFile,
     getFile,
     getFileByFolderId,
+    getFileNameCount,
     deleteFile,
 };
