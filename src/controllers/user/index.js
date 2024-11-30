@@ -1,10 +1,8 @@
 import 'dotenv/config';
 import asyncHandler from 'express-async-handler';
-import { validationResult } from 'express-validator';
 import userService from '../../services/user.service.js';
 import folderService from '../../services/folder.service.js';
 import storageFactory from '../../storages/index.js';
-import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
 
 const me = asyncHandler(async (req, res, _) => {
@@ -16,22 +14,6 @@ const me = asyncHandler(async (req, res, _) => {
 });
 
 const deleteAccount = asyncHandler(async (req, res, _) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
-
     const { user } = req;
     const userId = Number(req.params.userId);
 

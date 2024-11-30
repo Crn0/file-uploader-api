@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import asyncHandler from 'express-async-handler';
-import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import fileService from '../../services/file.service.js';
 import folderService from '../../services/folder.service.js';
@@ -26,22 +25,6 @@ const fileExtensions = (mimeType) => {
 };
 
 const createFile = asyncHandler(async (req, res, _) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
-
     let fileUpload;
     const folderId = Number(req.query?.folderId);
     const ownerId = req.user.id;
@@ -120,22 +103,6 @@ const createFile = asyncHandler(async (req, res, _) => {
 });
 
 const generateLink = asyncHandler(async (req, res, _) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
-
     const { user } = req;
     const fileId = Number(req.params.fileId);
 
@@ -172,22 +139,6 @@ const generateLink = asyncHandler(async (req, res, _) => {
 });
 
 const getFileMetaData = asyncHandler(async (req, res, _) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
-
     const { user } = req;
     const fileId = Number(req.params.fileId);
 
@@ -210,22 +161,6 @@ const getFileMetaData = asyncHandler(async (req, res, _) => {
 });
 
 const getFileContent = asyncHandler(async (req, res, _) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
-
     const { user } = req;
     const fileId = Number(req.params.fileId);
 

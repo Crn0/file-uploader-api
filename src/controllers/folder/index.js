@@ -1,10 +1,8 @@
 import 'dotenv/config';
 import asyncHandler from 'express-async-handler';
-import { validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import folderService from '../../services/folder.service.js';
 import storageFactory from '../../storages/index.js';
-import FieldError from '../../errors/field.error.js';
 import APIError from '../../errors/api.error.js';
 
 const createSubFolder = asyncHandler(async (req, res, _) => {
@@ -14,21 +12,6 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
 
     const storage = storageFactory().createStorage('cloudinary');
 
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
     const { includes } = req;
 
     const parentFolder = await folderService.getFolder(folderId);
@@ -61,22 +44,6 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
 });
 
 const generateLink = asyncHandler(async (req, res, _) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
-
     const { user } = req;
     const folderId = Number(req.params.folderId);
 
@@ -115,24 +82,7 @@ const generateLink = asyncHandler(async (req, res, _) => {
 const getRootFolder = asyncHandler(async (req, res, _) => {
     const { user } = req;
     const { includes, take, skip } = req;
-
     const userId = Number(user.id);
-
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
 
     const folder = await folderService.getRootFolder(userId, includes);
 
@@ -167,22 +117,6 @@ const getFolder = asyncHandler(async (req, res, _) => {
     const { includes, take, skip } = req;
     const folderId = Number(req.params.folderId);
     const userId = Number(user.id);
-
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
 
     const folder = await folderService.getFolder(folderId, includes);
 
@@ -223,22 +157,7 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
     const userId = Number(req.user?.id);
     const folderId = Number(req.params.folderId);
 
-    const errors = validationResult(req);
     const storage = storageFactory().createStorage('cloudinary');
-
-    if (!errors.isEmpty()) {
-        const errorFields = errors.array().map((err) => {
-            const { type, msg: message, path: field } = err;
-
-            return {
-                type,
-                field,
-                message,
-            };
-        });
-
-        throw new FieldError('Validation Failed', errorFields, 422);
-    }
 
     const folderExist = await folderService.getFolder(folderId);
 

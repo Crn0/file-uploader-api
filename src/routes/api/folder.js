@@ -14,6 +14,7 @@ router.get(
     middlewares.protectedRoute,
     queryValidation.folder('root'),
     middlewares.queryOptions,
+    middlewares.validationError,
     controllers.getRootFolder
 );
 
@@ -23,6 +24,7 @@ router.get(
     paramValidation.entityId('folderId'),
     queryValidation.folder('get'),
     middlewares.queryOptions,
+    middlewares.validationError,
     controllers.getFolder
 );
 
@@ -31,6 +33,7 @@ router.get(
     middlewares.protectedRoute,
     paramValidation.entityId('folderId'),
     queryValidation.folder('get:link'),
+    middlewares.validationError,
     controllers.generateLink
 );
 
@@ -41,6 +44,7 @@ router.post(
     queryValidation.folder('post'),
     formValidation.resourceEntity,
     middlewares.queryOptions,
+    middlewares.validationError,
     controllers.createSubFolder
 );
 
@@ -49,6 +53,7 @@ router.delete(
     middlewares.protectedRoute,
     paramValidation.entityId('folderId'),
     queryValidation.folder('delete'),
+    middlewares.validationError,
     controllers.deleteFolder
 );
 
