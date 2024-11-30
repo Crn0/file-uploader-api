@@ -13,6 +13,7 @@ router.get(
     '/root',
     middlewares.protectedRoute,
     queryValidation.folder('root'),
+    middlewares.queryOptions,
     controllers.getRootFolder
 );
 
