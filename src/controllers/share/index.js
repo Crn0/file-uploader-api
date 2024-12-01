@@ -1,18 +1,9 @@
 import 'dotenv/config';
 import asyncHandler from 'express-async-handler';
 import folderService from '../../services/folder.service.js';
-import helpers from '../../helpers/controllers/index.js';
 import storageFactory from '../../storages/index.js';
-import queryValidKeys from '../../configs/queryValidKeys/index.js';
 import APIError from '../../errors/api.error.js';
 import fileService from '../../services/file.service.js';
-
-const { optionIncludes, pagination } = helpers;
-
-const folderValidKeys = {
-    folders: queryValidKeys.folders,
-    files: queryValidKeys.files,
-};
 
 const getFolder = asyncHandler(async (req, res, next) => {
     if (req.query.type !== 'folder') return next();
