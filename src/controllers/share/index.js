@@ -54,7 +54,7 @@ const getFolder = asyncHandler(async (req, res, next) => {
         folder.id
     );
 
-    const isValidPath = path.map(
+    const isValidPathChildPath = path.map(
         (pathObj) => req.shareToken.id === pathObj.parentId
     );
 
@@ -63,8 +63,10 @@ const getFolder = asyncHandler(async (req, res, next) => {
             'The resource could not be found on the server',
             404
         );
-
-    if (!isValidPath.some((p) => p === true))
+    // if the query is for the sub folder
+    // check if the sub folder path containts the shared folderId
+    // if not throw an error
+    if (req.params.folderId && !isValidPathChildPath.some((p) => p === true))
         throw new APIError(
             'The resource could not be found on the server',
             404
