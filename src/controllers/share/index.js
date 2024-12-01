@@ -29,7 +29,10 @@ const getFolder = asyncHandler(async (req, res, next) => {
         );
 
     let folder;
-    const { includes, take, skip } = req;
+    const {
+        includes,
+        pagination: { take, skip },
+    } = req;
 
     // if there is a child id query the child folder
     // else query the parent folder
