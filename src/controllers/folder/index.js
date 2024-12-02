@@ -102,7 +102,7 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
     const path = await folderService.getFolderPath(ownerId, folderId);
 
     const total = await folderService.getResourcesTotalCount(userId, folderId);
-    console.log(take, skip);
+
     return res.status(202).json({
         path,
         data: {
