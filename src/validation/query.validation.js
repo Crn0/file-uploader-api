@@ -13,10 +13,6 @@ const entityId = (id) =>
         .trim()
         .notEmpty()
         .withMessage(`The ${id} query parameter cannot be empty`)
-        .isNumeric()
-        .withMessage(
-            `The ${id} query parameter must be a numeric value, but you sent a value of type '${typeof id}'`
-        )
         .escape();
 
 const expiresIn = () =>
