@@ -59,14 +59,15 @@ const generateLink = asyncHandler(async (req, res, _) => {
         const token = jwt.sign(
             {
                 id: folder.id,
+                type: 'folder',
             },
-            process.env.FOLDER_SHARE_URL_SECRET,
+            process.env.SHARE_URL_SECRET,
             {
                 expiresIn: req.query.expiresIn || 60 * 60, // default one hour
             }
         );
 
-        const url = `${process.env.SERVER_URL}/api/v1/share/${token}?type=folder`;
+        const url = `${process.env.SERVER_URL}/api/v1/share/${token}`;
 
         res.status(200).json({
             url,

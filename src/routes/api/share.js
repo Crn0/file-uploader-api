@@ -9,10 +9,10 @@ const router = Router();
 
 router.get(
     '/:token',
+    middlewares.readShareToken,
     paramValidation.token(),
     queryValidation.share('get'),
     middlewares.validationError,
-    middlewares.readShareToken,
     middlewares.queryOptions,
     controllers.getFolder,
     controllers.getFileMetaData,

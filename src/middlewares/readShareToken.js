@@ -3,17 +3,9 @@ import jwt from 'jsonwebtoken';
 import APIError from '../errors/api.error.js';
 
 const readShareToken = (req, res, next) => {
-    let secret;
+    const secret = process.env.SHARE_URL_SECRET;
 
     const { token } = req.params;
-    const { type } = req.query;
-
-    if (type === 'folder') {
-        secret = process.env.FOLDER_SHARE_URL_SECRET;
-    }
-    if (type === 'file') {
-        secret = process.env.FILE_SHARE_URL_SECRET;
-    }
 
     if (typeof token !== 'undefined') {
         jwt.verify(token, secret, (err, decoded) => {

@@ -29,26 +29,11 @@ const expiresIn = () =>
             'Invalid time format. Supported formats are: 10s for seconds, 10m for minutes, 10h for hours, 10d for days'
         );
 
-const entityType = () =>
-    query('type')
-        .trim()
-        .notEmpty()
-        .withMessage(`The 'type' query parameter cannot be empty`)
-        .isString()
-        .withMessage(`The 'type' query parameter must be a string value`)
-        .custom((val) => ['folder', 'file'].includes(val.trim()))
-        .withMessage(
-            "Invalid 'type' query parameter value. Valid values are: folder or file"
-        );
-
 const fileAction = () =>
     query('action')
         .trim()
         .custom((val, { req }) => {
-            if (
-                req.query.type.trim().toLowerCase() === 'folder' &&
-                !req.query.fileId
-            )
+            if (req.shareToken.type === 'folder' && !req.query.fileId)
                 return true;
 
             return ['metadata', 'preview', 'download'].includes(
@@ -105,7 +90,6 @@ export default {
         const reqObject = {
             get: [
                 includes(true),
-                entityType(),
                 fileAction(),
                 subEntity('folderId'),
                 subEntity('fileId'),
