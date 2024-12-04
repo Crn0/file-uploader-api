@@ -125,6 +125,7 @@ const generateLink = asyncHandler(async (req, res, _) => {
 
         res.status(200).json({
             url,
+            action: 'file:share',
         });
     } else {
         throw new APIError(
@@ -147,7 +148,10 @@ const getFileMetaData = asyncHandler(async (req, res, _) => {
         );
 
     if (file.ownerId === user.id || user.role === 'admin') {
-        res.status(200).json(file);
+        res.status(200).json({
+            file,
+            action: 'file:metadata',
+        });
     } else {
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
@@ -173,7 +177,10 @@ const getFileContent = asyncHandler(async (req, res, _) => {
 
         const fileURL = storage.fileDownload(file);
 
-        res.redirect(fileURL);
+        res.redirect({
+            ur: fileURL,
+            action: 'file:download',
+        });
     } else {
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
@@ -246,6 +253,8 @@ const previewFile = asyncHandler(async (req, res, _) => {
 
         res.status(200).json({
             url: imageURL,
+            action: 'file:preview',
+            fileName: file.name,
         });
     } else {
         throw new APIError(
