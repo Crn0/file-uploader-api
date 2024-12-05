@@ -110,30 +110,29 @@ const generateLink = asyncHandler(async (req, res, _) => {
             404
         );
 
-    if (file.ownerId === user.id) {
-        const token = jwt.sign(
-            {
-                id: file.id,
-                type: 'file',
-            },
-            process.env.SHARE_URL_SECRET,
-            {
-                expiresIn: req.query.expiresIn || 60 * 60, // default one hour
-            }
-        );
-
-        const url = `${process.env.SERVER_URL}/api/v1/share/${token}?action=metadata`;
-
-        res.status(200).json({
-            url,
-            action: 'file:share',
-        });
-    } else {
+    if (file.ownerId !== user.id)
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
             403
         );
-    }
+
+    const token = jwt.sign(
+        {
+            id: file.id,
+            type: 'file',
+        },
+        process.env.SHARE_URL_SECRET,
+        {
+            expiresIn: req.query.expiresIn || 60 * 60, // default one hour
+        }
+    );
+
+    const url = `${process.env.SERVER_URL}/api/v1/share/${token}?action=metadata`;
+
+    return res.status(200).json({
+        url,
+        action: 'file:share',
+    });
 });
 
 const getFileMetaData = asyncHandler(async (req, res, _) => {
@@ -147,18 +146,16 @@ const getFileMetaData = asyncHandler(async (req, res, _) => {
             'The resource could not be found on the server',
             404
         );
-
-    if (file.ownerId === user.id || user.role === 'admin') {
-        res.status(200).json({
-            file,
-            action: 'file:metadata',
-        });
-    } else {
+    if (file.ownerId !== user.id)
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
             403
         );
-    }
+
+    return res.status(200).json({
+        file,
+        action: 'file:metadata',
+    });
 });
 
 const getFileContent = asyncHandler(async (req, res, _) => {
@@ -173,18 +170,16 @@ const getFileContent = asyncHandler(async (req, res, _) => {
             404
         );
 
-    if (file.ownerId === user.id || user.role === 'admin') {
-        const storage = storageFactory().createStorage('cloudinary');
-
-        const fileURL = storage.download(file);
-
-        res.redirect(fileURL);
-    } else {
+    if (file.ownerId !== user.id)
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
             403
         );
-    }
+    const storage = storageFactory().createStorage('cloudinary');
+
+    const fileURL = storage.download(file);
+
+    return res.redirect(fileURL);
 });
 
 const deleteFile = asyncHandler(async (req, res, _) => {
@@ -193,24 +188,20 @@ const deleteFile = asyncHandler(async (req, res, _) => {
 
     const fileExist = await fileService.getFile(fileId);
 
-    if (!fileExist)
-        throw new APIError(
-            'The resource you are attempting to delete could not be found. Please check the resource ID',
-            404
-        );
+    if (!fileExist) return res.sendStatus(204);
 
-    if (fileExist.ownerId === user.id || user.role === 'admin') {
-        const storage = storageFactory().createStorage('cloudinary');
-
-        await fileService.deleteFile(fileExist.id, storage.destroyFile);
-
-        res.sendStatus(204);
-    } else {
+    if (fileExist && fileExist.ownerId !== user.id) {
         throw new APIError(
             'You do not have the required permissions to delete this resource',
             403
         );
     }
+
+    const storage = storageFactory().createStorage('cloudinary');
+
+    await fileService.deleteFile(fileExist.id, storage.destroyFile);
+
+    return res.sendStatus(204);
 });
 
 const previewFile = asyncHandler(async (req, res, _) => {
@@ -225,28 +216,27 @@ const previewFile = asyncHandler(async (req, res, _) => {
             404
         );
 
+    if (file.ownerId !== user.id)
+        throw new APIError(
+            'Permission Denied: You do not have the necessary permissions to access this resource',
+            403
+        );
+
     if (file.extension === 'epub')
         throw new APIError(
             'Files that have the .epub extension cannot be previewed',
             400
         );
 
-    if (file.ownerId === user.id || user.role === 'admin') {
-        const storage = storageFactory().createStorage('cloudinary');
+    const storage = storageFactory().createStorage('cloudinary');
 
-        const imageURL = storage.preview(file);
+    const imageURL = storage.preview(file);
 
-        res.status(200).json({
-            url: imageURL,
-            action: 'file:preview',
-            fileName: file.name,
-        });
-    } else {
-        throw new APIError(
-            'Permission Denied: You do not have the necessary permissions to access this resource',
-            403
-        );
-    }
+    return res.status(200).json({
+        url: imageURL,
+        action: 'file:preview',
+        fileName: file.name,
+    });
 });
 
 export default {
