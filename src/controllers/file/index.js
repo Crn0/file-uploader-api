@@ -193,24 +193,20 @@ const deleteFile = asyncHandler(async (req, res, _) => {
 
     const fileExist = await fileService.getFile(fileId);
 
-    if (!fileExist)
-        throw new APIError(
-            'The resource you are attempting to delete could not be found. Please check the resource ID',
-            404
-        );
+    if (!fileExist) return res.sendStatus(204);
 
-    if (fileExist.ownerId === user.id || user.role === 'admin') {
-        const storage = storageFactory().createStorage('cloudinary');
-
-        await fileService.deleteFile(fileExist.id, storage.destroyFile);
-
-        res.sendStatus(204);
-    } else {
+    if (fileExist && fileExist.ownerId === user.id) {
         throw new APIError(
             'You do not have the required permissions to delete this resource',
             403
         );
     }
+
+    const storage = storageFactory().createStorage('cloudinary');
+
+    await fileService.deleteFile(fileExist.id, storage.destroyFile);
+
+    return res.sendStatus(204);
 });
 
 const previewFile = asyncHandler(async (req, res, _) => {
