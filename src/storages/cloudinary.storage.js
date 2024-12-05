@@ -6,6 +6,17 @@ const fileURL = (fileObj, transformations) =>
         ...transformations,
     });
 
+const preview = (fileObj) =>
+    cloudinary.utils.private_download_url(fileObj.publicId, 'webp', {
+        resource_type: fileObj.resourceType,
+    });
+
+const download = (fileObj) =>
+    cloudinary.utils.private_download_url(fileObj.publicId, fileObj.extension, {
+        resource_type: fileObj.resourceType,
+        attachment: true,
+    });
+
 const fileDownload = (fileObj) =>
     cloudinary.url(fileObj.publicId, {
         flags: `attachment:${fileObj.name}`,
@@ -45,12 +56,14 @@ const createFile = async (folder, file, type, eagerOptions) => {
         if (type === 'application/epub+zip') {
             res = await cloudinary.uploader.upload(file, {
                 folder,
+                type: 'private',
                 resource_type: 'raw',
                 use_filename: true,
             });
         } else {
             res = await cloudinary.uploader.upload(file, {
                 folder,
+                type: 'private',
                 resource_type: 'image',
                 eager: eagerOptions,
                 use_filename: true,
@@ -194,4 +207,6 @@ export default {
     destroyFolder,
     destroyNestedFiles,
     destroyFile,
+    preview,
+    download,
 };

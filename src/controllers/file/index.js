@@ -176,12 +176,9 @@ const getFileContent = asyncHandler(async (req, res, _) => {
     if (file.ownerId === user.id || user.role === 'admin') {
         const storage = storageFactory().createStorage('cloudinary');
 
-        const fileURL = storage.fileDownload(file);
+        const fileURL = storage.download(file);
 
-        res.redirect({
-            ur: fileURL,
-            action: 'file:download',
-        });
+        res.redirect(fileURL);
     } else {
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
@@ -218,7 +215,6 @@ const deleteFile = asyncHandler(async (req, res, _) => {
 
 const previewFile = asyncHandler(async (req, res, _) => {
     const { user } = req;
-    const { transformations } = req.query;
     const fileId = Number(req.params.fileId);
 
     const file = await fileService.getFile(fileId);
@@ -238,19 +234,7 @@ const previewFile = asyncHandler(async (req, res, _) => {
     if (file.ownerId === user.id || user.role === 'admin') {
         const storage = storageFactory().createStorage('cloudinary');
 
-        const imageURL = storage.fileURL(file, {
-            // covernt the transformation query string to object
-            ...transformations?.split(',')?.reduce((obj, __) => {
-                const str = __.split('=');
-                const key = str[0];
-                const value = str[1];
-
-                return {
-                    ...obj,
-                    [key]: value,
-                };
-            }, {}),
-        });
+        const imageURL = storage.preview(file);
 
         res.status(200).json({
             url: imageURL,

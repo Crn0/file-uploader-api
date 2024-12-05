@@ -169,7 +169,7 @@ const getFileContent = asyncHandler(async (req, res, next) => {
 
     const storage = storageFactory().createStorage('cloudinary');
 
-    const fileURL = storage.fileDownload(file);
+    const fileURL = storage.download(file);
 
     return res.redirect(fileURL);
 });
@@ -224,7 +224,6 @@ const previewFile = asyncHandler(async (req, res, next) => {
     }
 
     const fileId = Number(req.shareToken.id);
-    const { transformations } = req.query;
 
     const file = await fileService.getFile(fileId);
 
@@ -236,18 +235,7 @@ const previewFile = asyncHandler(async (req, res, next) => {
 
     const storage = storageFactory().createStorage('cloudinary');
 
-    const imageURL = storage.fileURL(file, {
-        // covernt the transformation query string to object
-        ...transformations?.split(',')?.reduce((obj, _) => {
-            const str = _?.split('=');
-            const key = str[0];
-            const value = str[1];
-            return {
-                ...obj,
-                [key]: value,
-            };
-        }, {}),
-    });
+    const imageURL = storage.preview(file);
 
     return res.status(200).json({
         url: imageURL,
