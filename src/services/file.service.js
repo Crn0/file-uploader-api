@@ -53,7 +53,7 @@ const getFileNameCount = async (userId, folderId) => {
 const deleteFile = async (id, cb) => {
     const file = await fileRepositroy.deleteFile(id);
 
-    await cb(file.publicId, file.resourceType);
+    await cb(file);
 
     return file;
 };

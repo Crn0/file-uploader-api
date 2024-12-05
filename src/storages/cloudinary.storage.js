@@ -124,10 +124,11 @@ const getSubFolders = async (folderPath) => {
     }
 };
 
-const destroyFile = async (publicId, type) => {
+const destroyFile = async (fileDTO) => {
     try {
-        const res = await cloudinary.uploader.destroy(publicId, {
-            resource_type: type,
+        const res = await cloudinary.uploader.destroy(fileDTO.publicId, {
+            resource_type: fileDTO.resourceType,
+            type: fileDTO.deliveryType,
             invalidate: true,
         });
 
