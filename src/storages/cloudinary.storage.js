@@ -151,7 +151,6 @@ const destroyFile = async (fileDTO) => {
 const destroyNestedFiles = async (folderPath) => {
     try {
         const files = await getFilesByAssetFolder(folderPath);
-
         const subFolders = await getSubFolders(folderPath);
 
         await Promise.all(
@@ -162,7 +161,10 @@ const destroyNestedFiles = async (folderPath) => {
 
         return Promise.all(
             files?.map?.(async (file) => {
-                await destroyFile(file.public_id, file.resource_type);
+                await destroyFile({
+                    publicId: file.public_id,
+                    resourceType: file.resource_type,
+                });
             })
         );
     } catch (e) {
