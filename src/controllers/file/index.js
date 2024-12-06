@@ -179,7 +179,9 @@ const getFileContent = asyncHandler(async (req, res, _) => {
 
     const fileURL = storage.download(file);
 
-    return res.redirect(fileURL);
+    return res.status(302).json({
+        url: fileURL,
+    });
 });
 
 const deleteFile = asyncHandler(async (req, res, _) => {
