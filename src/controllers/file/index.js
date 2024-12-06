@@ -191,6 +191,7 @@ const deleteFile = asyncHandler(async (req, res, _) => {
     const fileExist = await fileService.getFile(fileId);
 
     if (!fileExist) return res.sendStatus(204);
+    if (!fileExist) return res.sendStatus(204);
 
     if (fileExist && fileExist.ownerId !== user.id) {
         throw new APIError(
@@ -198,6 +199,12 @@ const deleteFile = asyncHandler(async (req, res, _) => {
             403
         );
     }
+
+    const storage = storageFactory().createStorage('cloudinary');
+
+    await fileService.deleteFile(fileExist.id, storage.destroyFile);
+
+    return res.sendStatus(204);
 
     const storage = storageFactory().createStorage('cloudinary');
 
