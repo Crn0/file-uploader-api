@@ -7,7 +7,7 @@ import APIError from '../../errors/api.error.js';
 
 const createSubFolder = asyncHandler(async (req, res, _) => {
     const { name } = req.body;
-    const userId = Number(req.user.id);
+
     const folderId = Number(req.params.folderId);
 
     const storage = storageFactory().createStorage('cloudinary');
@@ -23,13 +23,13 @@ const createSubFolder = asyncHandler(async (req, res, _) => {
         );
 
     const nameCount = await folderService.getFolderNameCountByUserId(
-        userId,
+        req.user.id,
         name
     );
     const path = `${parentFolder.path}/${name}_${nameCount + 1}`;
 
     const folder = await folderService.createSubFolder(
-        userId,
+        req.user.id,
         parentFolder.id,
         name,
         path,
@@ -55,29 +55,29 @@ const generateLink = asyncHandler(async (req, res, _) => {
             404
         );
 
-    if (folder.ownerId === user.id) {
-        const token = jwt.sign(
-            {
-                id: folder.id,
-                type: 'folder',
-            },
-            process.env.SHARE_URL_SECRET,
-            {
-                expiresIn: req.query.expiresIn || 60 * 60, // default one hour
-            }
-        );
-
-        const url = `${process.env.SERVER_URL}/api/v1/share/${token}`;
-
-        res.status(200).json({
-            url,
-        });
-    } else {
+    if (folder.ownerId !== user.id) {
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
             403
         );
     }
+
+    const token = jwt.sign(
+        {
+            id: folder.id,
+            type: 'folder',
+        },
+        process.env.SHARE_URL_SECRET,
+        {
+            expiresIn: req.query.expiresIn || 60 * 60, // default one hour
+        }
+    );
+
+    const url = `${process.env.SERVER_URL}/api/v1/share/${token}`;
+
+    res.status(200).json({
+        url,
+    });
 });
 
 const getRootFolder = asyncHandler(async (req, res, _) => {
@@ -87,9 +87,7 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
         pagination: { take, skip },
     } = req;
 
-    const userId = Number(user.id);
-
-    const folder = await folderService.getRootFolder(userId, includes);
+    const folder = await folderService.getRootFolder(user.id, includes);
 
     if (!folder)
         throw new APIError(
@@ -102,7 +100,7 @@ const getRootFolder = asyncHandler(async (req, res, _) => {
 
     const path = await folderService.getFolderPath(ownerId, folderId);
 
-    const total = await folderService.getResourcesTotalCount(userId, folderId);
+    const total = await folderService.getResourcesTotalCount(user.id, folderId);
 
     return res.status(202).json({
         path,
@@ -124,41 +122,41 @@ const getFolder = asyncHandler(async (req, res, _) => {
         pagination: { take, skip },
     } = req;
     const folderId = Number(req.params.folderId);
-    const userId = Number(user.id);
 
     const folder = await folderService.getFolder(folderId, includes);
 
-    if (folder.id === userId || user.role === 'admin') {
-        if (!folder)
-            throw new APIError(
-                'The resource could not be found on the server',
-                404
-            );
-
-        const path = await folderService.getFolderPath(folder.id, folderId);
-
-        const total = await folderService.getResourcesTotalCount(
-            folder.id,
-            folderId
-        );
-
-        res.status(200).json({
-            path,
-            data: {
-                folder,
-            },
-            pagination: {
-                take,
-                skip,
-                total,
-            },
-        });
-    } else {
+    if (folder.ownerId !== user.id) {
         throw new APIError(
             'Permission Denied: You do not have the necessary permissions to access this resource',
             403
         );
     }
+
+    if (!folder) {
+        throw new APIError(
+            'The resource could not be found on the server',
+            404
+        );
+    }
+
+    const path = await folderService.getFolderPath(folder.id, folderId);
+
+    const total = await folderService.getResourcesTotalCount(
+        folder.id,
+        folderId
+    );
+
+    res.status(200).json({
+        path,
+        data: {
+            folder,
+        },
+        pagination: {
+            take,
+            skip,
+            total,
+        },
+    });
 });
 
 const deleteFolder = asyncHandler(async (req, res, _) => {
@@ -176,20 +174,20 @@ const deleteFolder = asyncHandler(async (req, res, _) => {
         );
     }
 
-    if (userId === folderExist.ownerId || req.user.role === 'admin') {
-        await storage.destroyNestedFiles(folderExist.path);
-
-        await storage.destroyFolder(folderExist.path);
-
-        await folderService.deleteFolder(folderExist);
-
-        res.sendStatus(204);
-    } else {
+    if (userId !== folderExist.ownerId) {
         throw new APIError(
             'You do not have the required permissions to delete this resource',
             403
         );
     }
+
+    await storage.destroyNestedFiles(folderExist.path);
+
+    await storage.destroyFolder(folderExist.path);
+
+    await folderService.deleteFolder(folderExist);
+
+    res.sendStatus(204);
 });
 
 export default {
