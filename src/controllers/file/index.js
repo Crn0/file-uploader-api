@@ -191,9 +191,8 @@ const deleteFile = asyncHandler(async (req, res, _) => {
     const fileExist = await fileService.getFile(fileId);
 
     if (!fileExist) return res.sendStatus(204);
-    if (!fileExist) return res.sendStatus(204);
 
-    if (fileExist && fileExist.ownerId !== user.id) {
+    if (fileExist.ownerId !== user.id) {
         throw new APIError(
             'You do not have the required permissions to delete this resource',
             403
@@ -203,10 +202,6 @@ const deleteFile = asyncHandler(async (req, res, _) => {
     const storage = storageFactory().createStorage('cloudinary');
 
     await fileService.deleteFile(fileExist.id, storage.destroyFile);
-
-    return res.sendStatus(204);
-
-    const storage = storageFactory().createStorage('cloudinary');
 
     await fileService.deleteFile(fileExist.id, storage.destroyFile);
 
