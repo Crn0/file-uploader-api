@@ -73,7 +73,7 @@ const generateLink = asyncHandler(async (req, res, _) => {
         }
     );
 
-    const url = `${process.env.SERVER_URL}/api/v1/share/${token}`;
+    const url = `${process.env.FRONTEND_URL}/share?token=${token}`;
 
     res.status(200).json({
         url,
@@ -139,7 +139,7 @@ const getFolder = asyncHandler(async (req, res, _) => {
         );
     }
 
-    const path = await folderService.getFolderPath(folder.id, folderId);
+    const path = await folderService.getFolderPath(folder.ownerId, folder.id);
 
     const total = await folderService.getResourcesTotalCount(
         folder.id,
