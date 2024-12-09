@@ -6,9 +6,10 @@ const fileURL = (fileObj, transformations) =>
         ...transformations,
     });
 
-const preview = (fileObj) =>
+const preview = (fileObj, expiresAt) =>
     cloudinary.utils.private_download_url(fileObj.publicId, 'webp', {
         resource_type: fileObj.resourceType,
+        expires_at: expiresAt || Date.now() + 60 * 60 * 1000,
     });
 
 const download = (fileObj) =>
