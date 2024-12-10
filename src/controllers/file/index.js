@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import asyncHandler from 'express-async-handler';
-import jwt from 'jsonwebtoken';
 import fileService from '../../services/file.service.js';
 import folderService from '../../services/folder.service.js';
 import storageFactory from '../../storages/index.js';
@@ -21,6 +20,27 @@ const fileExtensions = (mimeType) => {
             return 'epub';
         default:
             throw new Error(`Invalid ${mimeType}`);
+    }
+};
+
+const expiresIn = (time) => {
+    switch (time[time.length - 1]) {
+        case 's':
+            return Date.now() + time.replace(/[^0-9]/g, '') * 1000;
+
+        case 'm':
+            return Date.now() + time.replace(/[^0-9]/g, '') * 60 * 1000;
+
+        case 'h':
+            return Date.now() + time.replace(/[^0-9]/g, '') * 60 * 60 * 1000;
+
+        case 'd':
+            return (
+                Date.now() + time.replace(/[^0-9]/g, '') * 24 * 60 * 60 * 1000
+            );
+
+        default:
+            return Date.now() + 60 * 60 * 1000;
     }
 };
 
@@ -116,18 +136,9 @@ const generateLink = asyncHandler(async (req, res, _) => {
             403
         );
 
-    const token = jwt.sign(
-        {
-            id: file.id,
-            type: 'file',
-        },
-        process.env.SHARE_URL_SECRET,
-        {
-            expiresIn: req.query.expiresIn || 60 * 60, // default one hour
-        }
-    );
+    const storage = storageFactory().createStorage('cloudinary');
 
-    const url = `${process.env.SERVER_URL}/api/v1/share/${token}?action=metadata`;
+    const url = storage.preview(file, expiresIn(req.query.expiresIn));
 
     return res.status(200).json({
         url,
