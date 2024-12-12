@@ -129,7 +129,7 @@ const destroyFile = async (fileDTO) => {
     try {
         const res = await cloudinary.uploader.destroy(fileDTO.publicId, {
             resource_type: fileDTO.resourceType,
-            type: fileDTO.deliveryType,
+            type: fileDTO.type,
             invalidate: true,
         });
 
@@ -153,7 +153,6 @@ const destroyNestedFiles = async (folderPath) => {
     try {
         const files = await getFilesByAssetFolder(folderPath);
         const subFolders = await getSubFolders(folderPath);
-
         await Promise.all(
             subFolders?.map?.(async (folder) => {
                 await destroyNestedFiles(folder.path);
@@ -161,12 +160,13 @@ const destroyNestedFiles = async (folderPath) => {
         );
 
         return Promise.all(
-            files?.map?.(async (file) => {
-                await destroyFile({
+            files?.map?.(async (file) =>
+                destroyFile({
                     publicId: file.public_id,
                     resourceType: file.resource_type,
-                });
-            })
+                    type: file.type,
+                })
+            )
         );
     } catch (e) {
         const { error } = e;
