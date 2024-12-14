@@ -63,8 +63,10 @@ const getFolder = asyncHandler(async (req, res, next) => {
             404
         );
 
+    const filteredPath = path.filter((p) => p.parentId !== null);
+
     return res.status(200).json({
-        path,
+        path: filteredPath,
         data: {
             folder,
         },
