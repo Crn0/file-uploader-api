@@ -214,8 +214,6 @@ const deleteFile = asyncHandler(async (req, res, _) => {
 
     await fileService.deleteFile(fileExist.id, storage.destroyFile);
 
-    await fileService.deleteFile(fileExist.id, storage.destroyFile);
-
     return res.sendStatus(204);
 });
 

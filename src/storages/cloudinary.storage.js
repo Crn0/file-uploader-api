@@ -129,7 +129,7 @@ const destroyFile = async (fileDTO) => {
     try {
         const res = await cloudinary.uploader.destroy(fileDTO.publicId, {
             resource_type: fileDTO.resourceType,
-            type: fileDTO.type,
+            type: fileDTO.deliveryType,
             invalidate: true,
         });
 
@@ -164,7 +164,7 @@ const destroyNestedFiles = async (folderPath) => {
                 destroyFile({
                     publicId: file.public_id,
                     resourceType: file.resource_type,
-                    type: file.type,
+                    deliveryType: file.type,
                 })
             )
         );
