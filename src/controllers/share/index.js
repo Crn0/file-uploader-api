@@ -126,40 +126,7 @@ const getFileMetaData = asyncHandler(async (req, res, next) => {
 const getFileContent = asyncHandler(async (req, res, next) => {
     if (req.query.action !== 'download') return next();
 
-    if (req.shareToken.type === 'folder') {
-        const fileId = Number(req.query.fileId);
-
-        const file = await fileService.getFile(fileId);
-        const path = await folderService.getFolderPath(
-            file.ownerId,
-            file.folderId
-        );
-
-        const isNotValidPath =
-            path
-                .map((pathObj) => req.shareToken.id === pathObj.id)
-                .some((bool) => bool === true) === false;
-
-        if (!file)
-            throw new APIError(
-                'The resource could not be found on the server',
-                404
-            );
-
-        if (req.query.fileId && isNotValidPath)
-            throw new APIError(
-                'The resource could not be found on the server',
-                404
-            );
-
-        const storage = storageFactory().createStorage('cloudinary');
-
-        const fileURL = storage.fileDownload(file);
-
-        return res.redirect(fileURL);
-    }
-
-    const fileId = Number(req.shareToken.id);
+    const fileId = Number(req.query.fileId);
 
     const file = await fileService.getFile(fileId);
 
@@ -170,62 +137,17 @@ const getFileContent = asyncHandler(async (req, res, next) => {
         );
 
     const storage = storageFactory().createStorage('cloudinary');
-
     const fileURL = storage.download(file);
 
-    return res.redirect(fileURL);
+    return res.status(302).json({
+        url: fileURL,
+    });
 });
 
 const previewFile = asyncHandler(async (req, res, next) => {
     if (req.query.action !== 'preview') return next();
 
-    if (req.shareToken.type === 'folder') {
-        const { transformations } = req.query;
-        const fileId = Number(req.query.fileId);
-        const file = await fileService.getFile(fileId);
-        const path = await folderService.getFolderPath(
-            file.ownerId,
-            file.folderId
-        );
-
-        const isNotValidPath =
-            path
-                .map((pathObj) => req.shareToken.id === pathObj.id)
-                .some((bool) => bool === true) === false;
-
-        if (!file)
-            throw new APIError(
-                'The resource could not be found on the server',
-                404
-            );
-
-        if (req.query.fileId && isNotValidPath)
-            throw new APIError(
-                'The resource could not be found on the server',
-                404
-            );
-
-        const storage = storageFactory().createStorage('cloudinary');
-
-        const imageURL = storage.fileURL(file, {
-            // covernt the transformation query string to object
-            ...transformations?.split(',')?.reduce((obj, _) => {
-                const str = _?.split('=');
-                const key = str[0];
-                const value = str[1];
-                return {
-                    ...obj,
-                    [key]: value,
-                };
-            }, {}),
-        });
-
-        return res.status(200).json({
-            url: imageURL,
-        });
-    }
-
-    const fileId = Number(req.shareToken.id);
+    const fileId = Number(req.query.fileId);
 
     const file = await fileService.getFile(fileId);
 
@@ -238,7 +160,6 @@ const previewFile = asyncHandler(async (req, res, next) => {
     const storage = storageFactory().createStorage('cloudinary');
 
     const imageURL = storage.preview(file);
-
     return res.status(200).json({
         url: imageURL,
     });
