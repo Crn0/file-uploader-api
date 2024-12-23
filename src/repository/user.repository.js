@@ -1,4 +1,4 @@
-import client from '../db/client.js';
+import { client } from '../db/client.cjs';
 
 // USER META
 const getUserById = async (id) => {

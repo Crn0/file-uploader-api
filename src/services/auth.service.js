@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import authRepository from '../repository/auth.repository.js';
-import client from '../db/client.js';
+import { client } from '../db/client.cjs';
 
 const {
     SALT,

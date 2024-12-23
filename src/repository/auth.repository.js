@@ -1,4 +1,4 @@
-import client from '../db/client.js';
+import { client } from '../db/client.cjs';
 
 const createLocal = async (username, email, password, options) => {
     const user = await client.user.create({

@@ -1,4 +1,4 @@
-import client from '../db/client.js';
+import { client } from '../db/client.cjs';
 
 const createFile = async (
     ownerId,
