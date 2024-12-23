@@ -125,17 +125,17 @@ const getFolder = asyncHandler(async (req, res, _) => {
 
     const folder = await folderService.getFolder(folderId, includes);
 
-    if (folder.ownerId !== user.id) {
-        throw new APIError(
-            'Permission Denied: You do not have the necessary permissions to access this resource',
-            403
-        );
-    }
-
     if (!folder) {
         throw new APIError(
             'The resource could not be found on the server',
             404
+        );
+    }
+
+    if (folder.ownerId !== user.id) {
+        throw new APIError(
+            'Permission Denied: You do not have the necessary permissions to access this resource',
+            403
         );
     }
 
