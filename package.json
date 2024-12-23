@@ -5,6 +5,9 @@
     "version": "0.0.0",
     "main": "app.js",
     "type": "module",
+    "engines": {
+        "node": "=16.14.2"
+    },
     "prisma": {
         "schema": "./src/db/models/schema.prisma",
         "seed": "dotenv -e .env.dev -- node ./src/db/seed.js"
